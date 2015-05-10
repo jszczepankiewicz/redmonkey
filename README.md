@@ -1,4 +1,4 @@
-
+[![Build Status](https://travis-ci.org/jszczepankiewicz/redmonkey.svg?branch=master)](https://travis-ci.org/jszczepankiewicz/redmonkey)
 
 TODO: cleanings:
 - urwisy change to @since @author
