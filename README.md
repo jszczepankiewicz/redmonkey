@@ -1,3 +1,5 @@
+
+
 TODO: cleanings:
 - urwisy change to @since @author
 - packages
@@ -15,7 +17,7 @@ Testing and building
 ---------------------
 Requirements: 
 
-+	Java SDK 7 
++	Java SDK 8 
 +	Gradle 2.4
 +	Redis 2.8
 
