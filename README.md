@@ -29,5 +29,7 @@ Prereqisites:
 Please make sure you have working Gradle build with at least Java SDK 7. For testing running Redis on localhost is 
 required.
 
+[travis]:https://travis-ci.org/jszczepankiewicz/redmonkey
+[travis img]:https://travis-ci.org/jszczepankiewicz/redmonkey.svg?branch=master
 [license]:LICENSE
 [license img]:https://img.shields.io/github/license/mashape/apistatus.svg
