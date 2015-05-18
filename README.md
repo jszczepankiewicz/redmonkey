@@ -2,6 +2,7 @@
 
 [![][travis img]][travis]
 [![][license img]][license]
+[![Dependency Status](https://www.versioneye.com/user/projects/555a43d7634daa5dc80000c7/badge.svg?style=flat)](https://www.versioneye.com/user/projects/555a43d7634daa5dc80000c7)
 
 TODO: cleanings:
 ---------------------
