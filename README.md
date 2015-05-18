@@ -1,6 +1,10 @@
-[![Build Status](https://travis-ci.org/jszczepankiewicz/redmonkey.svg?branch=master)](https://travis-ci.org/jszczepankiewicz/redmonkey)
+# Redmonkey
+
+[![][travis img]][travis]
+[![][license img]][license]
 
 TODO: cleanings:
+---------------------
 - urwisy change to @since @author
 - packages
 - remove obsolete / unused
