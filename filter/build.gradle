@@ -8,16 +8,13 @@ repositories {
 }
 
 dependencies {
-
-    compile 'org.slf4j:slf4j-api:1.7.10'
-    compile 'javax.servlet:javax.servlet-api:3.1.0'
-    compile 'redis.clients:jedis:2.6.2'
-    compile 'com.typesafe:config:1.2.1'
-
-
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.assertj:assertj-core:2.0.0'
-    testCompile 'org.powermock:powermock-module-junit4:1.6.2'
-    testCompile 'org.powermock:powermock-api-mockito:1.6.2'
+    compile libraries.slf4j_api
+    compile libraries.servlet_api
+    compile libraries.jedis
+    compile libraries.typesafe_config
+    testCompile libraries.junit
+    testCompile libraries.mockito_core
+    testCompile libraries.assertj_core
+    testCompile libraries.powermock_module_junit4
+    testCompile libraries.powermock_api_mockito
 }

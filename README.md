@@ -6,6 +6,7 @@
 
 TODO: cleanings:
 ---------------------
+- fix double entering to filter for one request due to async request
 - urwisy change to @since @author
 - packages
 - remove obsolete / unused
