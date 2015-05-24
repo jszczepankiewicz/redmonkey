@@ -14,7 +14,7 @@
     <!-- Filter Example 1 -->
     <filter>
         <filter-name>helloWorld</filter-name>
-        <filter-class>badmonkey.ExpiringCacheFilter</filter-class>
+        <filter-class>redmonkey.ExpiringCacheFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>helloWorld</filter-name>
@@ -24,7 +24,7 @@
 
     <servlet>
         <servlet-name>HelloServlet</servlet-name>
-        <servlet-class>badmonkey.example.SomeTimeConsumingBlockingServlet</servlet-class>
+        <servlet-class>redmonkey.example.SomeTimeConsumingBlockingServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

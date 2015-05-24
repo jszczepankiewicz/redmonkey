@@ -1,0 +1,43 @@
+package redmonkey.cache;
+
+import redmonkey.PatternedUrl;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import org.junit.Test;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.TimeUnit;
+
+import static redmonkey.BadmonkeyLibraryAssertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+/**
+ * Created by urwisy on 2015-03-26.
+ */
+public class ResponseCacheByURIBuilderTest {
+
+    @Test
+    public void shouldLoadConfigurationFromFileOnClasspath() {
+
+        //  given
+        Config conf = ConfigFactory.load("badmonkey-test");
+        KeyStrategy keyStrategy = new URIKeyStrategy();
+
+        //  when
+        ResponseCacheByURIPolicy policy = ResponseCacheByURIBuilder.build(conf);
+
+        //  then
+        assertThat(policy.getRegions()).isNotEmpty().hasSize(3);
+        assertThat(policy.getRegions().get(new PatternedUrl("/api/v1/bestsellers/{D}"))).isEqualTo(new CacheRegion(1800000, TimeUnit.MILLISECONDS,keyStrategy));
+        assertThat(policy.getRegions().get(new PatternedUrl("/api/v1/users/{S}"))).isEqualTo(new CacheRegion(129000, TimeUnit.MILLISECONDS,keyStrategy));
+        assertThat(policy.getRegions().get(new PatternedUrl("/api/v1/events/{D}"))).isEqualTo(new CacheRegion(4, TimeUnit.MILLISECONDS,keyStrategy));
+    }
+
+    private HttpServletRequest forURI(final String uri) {
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRequestURI()).thenReturn(uri);
+        return request;
+    }
+
+}
