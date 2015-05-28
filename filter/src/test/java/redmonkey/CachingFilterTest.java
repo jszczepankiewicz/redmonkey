@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import static redmonkey.cache.ETag.ETAG_REQUEST_HEADER;
 import static redmonkey.cache.ETag.ETAG_RESPONSE_HEADER;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
@@ -28,6 +29,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static redmonkey.BadmonkeyLibraryAssertions.assertThat;
+import static redmonkey.cache.RedisCacheRepository.NO_RESULT_FOUND;
 
 /**
  * TODO: test flow should be refactored to more object oriented way thus eliminating passing so many arguments
@@ -49,17 +51,97 @@ public class CachingFilterTest {
     private CachingFilter filter;
 
 
-    @Ignore("implement me")
+    @Ignore("not yet implemented")
     @Test
-    public void notAccessedByAnyClientServiceShouldBeGeneratedAndPutIntoCache() {
+    public void notAccessedByAnyClientServiceShouldBeGeneratedAndPutIntoCache() throws Exception {
+
+        //  given
+        mockStatic(ConfigFactory.class);
+        mockStatic(RedisCacheRepositoryConfigBuilder.class);
+        mockStatic(ResponseCacheByURIBuilder.class);
+
+        HttpServletRequest request = doingGET(requestToCacheableURI());
+        ServletOutputStream outputStreamMock = mock(ServletOutputStream.class);
+
+        //  TODO: can we just hide creating responseStream inside response mock creation?
+        HttpServletResponse response = responseWith(outputStreamMock);
+
+        RedisCacheRepository repoMock = mock(RedisCacheRepository.class);
+        ResponseCacheByURIPolicy policyMock = mock(ResponseCacheByURIPolicy.class);
+
+        when(policyMock.getfor(request)).thenReturn(cacheableRegion());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(NO_RESULT_FOUND);
+
+        PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
+        PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
+        PowerMockito.when(ResponseCacheByURIBuilder.build(anyObject())).thenReturn(policyMock);
+        FilterChain filterChainMock = withFilterChain();
+
+        filter.init(null);
+
+        //  when
+        filter.doFilter(request, response, filterChainMock);
+
+        //  then
+
+        //  pass directly cachedContent object so it can also verify etag written?
+        //verifyResponseWritten(response, outputStreamMock, cachedContent.getPayload());
+
+        //  verify etag header set
+        //  TODO: add this assertion to other tests?
+        verifySomeEtagSet(response);
+
+        //  verify no interaction with underlying servlets
+        verifyRequestNotPassedToApplication(filterChainMock, request, response);
+
+        //  verify new content with etag was saved to cache
 
 
     }
 
-    @Ignore("implement me")
-    @Test
-    public void notAccessedYetByTheClientButCachedServiceShouldBeReturnedFromCache() {
 
+    @Test
+    public void notAccessedYetByTheClientButCachedServiceShouldBeReturnedFromCache() throws Exception{
+
+        //  given
+        mockStatic(ConfigFactory.class);
+        mockStatic(RedisCacheRepositoryConfigBuilder.class);
+        mockStatic(ResponseCacheByURIBuilder.class);
+
+        HttpServletRequest request = doingGET(requestToCacheableURI());
+        ServletOutputStream outputStreamMock = mock(ServletOutputStream.class);
+
+        //  TODO: can we just hide creating responseStream inside response mock creation?
+        HttpServletResponse response = responseWith(outputStreamMock);
+
+        RedisCacheRepository repoMock = mock(RedisCacheRepository.class);
+        ResponseCacheByURIPolicy policyMock = mock(ResponseCacheByURIPolicy.class);
+
+        when(policyMock.getfor(request)).thenReturn(cacheableRegion());
+        CacheResult cachedContent = storedValueDifferentThanClient();
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(cachedContent);
+
+        PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
+        PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
+        PowerMockito.when(ResponseCacheByURIBuilder.build(anyObject())).thenReturn(policyMock);
+        FilterChain filterChainMock = withFilterChain();
+
+        filter.init(null);
+
+        //  when
+        filter.doFilter(request, response, filterChainMock);
+
+        //  then
+
+        //  pass directly cachedContent object so it can also verify etag written?
+        verifyResponseWritten(response, outputStreamMock, cachedContent.getPayload());
+
+        //  verify etag header set
+        //  TODO: add this assertion to other tests?
+        verifyEtagSet(response, cachedContent.getStoredEtag());
+
+        //  verify no interaction with underlying servlets
+        verifyRequestNotPassedToApplication(filterChainMock, request, response);
     }
 
     @Test
@@ -70,7 +152,7 @@ public class CachingFilterTest {
         mockStatic(RedisCacheRepositoryConfigBuilder.class);
         mockStatic(ResponseCacheByURIBuilder.class);
 
-        HttpServletRequest request = doingGET(requestToCacheableURI());
+        HttpServletRequest request = clientWithCachedVersion(doingGET(requestToCacheableURI()), "someOlderVersionOnClientSide");
         ServletOutputStream outputStreamMock = mock(ServletOutputStream.class);
         //HttpServletResponse response = response();
         //  TODO: can we just hide creating responseStream inside response mock creation?
@@ -80,7 +162,7 @@ public class CachingFilterTest {
         ResponseCacheByURIPolicy policyMock = mock(ResponseCacheByURIPolicy.class);
 
         when(policyMock.getfor(request)).thenReturn(cacheableRegion());
-        CacheResult cachedContent = storedValueDifferent();
+        CacheResult cachedContent = storedValueDifferentThanClient();
         when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(cachedContent);
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
@@ -121,7 +203,7 @@ public class CachingFilterTest {
         ResponseCacheByURIPolicy policyMock = mock(ResponseCacheByURIPolicy.class);
 
         when(policyMock.getfor(request)).thenReturn(cacheableRegion());
-        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueUnchanged());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueSameAsOnClientSide());
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
         PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
@@ -158,7 +240,7 @@ public class CachingFilterTest {
         FilterChain filterChainMock = withFilterChain();
 
         when(policyMock.getfor(request)).thenReturn(nonCacheableRegion());
-        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueUnchanged());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueSameAsOnClientSide());
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
         PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
@@ -192,7 +274,7 @@ public class CachingFilterTest {
         FilterChain filterChainMock = withFilterChain();
 
         when(policyMock.getfor(request)).thenReturn(cacheableRegion());
-        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueUnchanged());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueSameAsOnClientSide());
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
         PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
@@ -225,7 +307,7 @@ public class CachingFilterTest {
         FilterChain filterChainMock = withFilterChain();
 
         when(policyMock.getfor(request)).thenReturn(cacheableRegion());
-        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueUnchanged());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueSameAsOnClientSide());
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
         PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
@@ -258,7 +340,7 @@ public class CachingFilterTest {
         FilterChain filterChainMock = withFilterChain();
 
         when(policyMock.getfor(request)).thenReturn(cacheableRegion());
-        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueUnchanged());
+        when(repoMock.fetchIfChanged(anyString(), anyString())).thenReturn(storedValueSameAsOnClientSide());
 
         PowerMockito.when(ConfigFactory.load("redmonkey")).thenReturn(null);
         PowerMockito.when(RedisCacheRepositoryConfigBuilder.build(anyObject())).thenReturn(repoMock);
@@ -293,12 +375,13 @@ public class CachingFilterTest {
         assertThat(responseContentCaptor.getValue()).isEqualTo(content.getBytes());
     }
 
-    private CacheResult storedValueDifferent(){
+
+    private CacheResult storedValueDifferentThanClient(){
         CacheResult result = new CacheResult(false, "{somepayload}", "assumedNewerEtag");
         return result;
     }
 
-    private CacheResult storedValueUnchanged() {
+    private CacheResult storedValueSameAsOnClientSide() {
         CacheResult result = new CacheResult(false, null, null);
         return result;
     }
@@ -361,6 +444,7 @@ public class CachingFilterTest {
         return request;
     }
 
+
     private HttpServletRequest doingGET(HttpServletRequest request) {
         when(request.getMethod()).thenReturn("GET");
         return request;
@@ -373,11 +457,16 @@ public class CachingFilterTest {
      * @return
      */
     private HttpServletRequest clientWithCachedVersion(HttpServletRequest request,  String etag){
+        when(request.getHeader(ETAG_REQUEST_HEADER)).thenReturn(etag);
         return request;
     }
 
     private void verifyRequestNotPassedToApplication(FilterChain filterChainMock, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         verify(filterChainMock, never()).doFilter(request, response);
+    }
+
+    private void verifySomeEtagSet(HttpServletResponse responseMock){
+        verify(responseMock, times(1)).addHeader(ETAG_RESPONSE_HEADER, anyString());
     }
 
     private void verifyEtagSet(HttpServletResponse responseMock, String value){

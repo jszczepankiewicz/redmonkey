@@ -8,9 +8,9 @@ TODO: cleanings:
 ---------------------
 - fix double entering to filter for one request due to async request
 - urwisy change to @since @author
-- packages
 - remove obsolete / unused
 - unused imports
+'
 - IMPLEMENT: 
 a) correclty saving ContentType for saved content
 b) add multitenancy
@@ -30,6 +30,14 @@ Requirements:
 Prereqisites:
 Please make sure you have working Gradle build with at least Java SDK 7. For testing running Redis on localhost is 
 required.
+
+Analyzing coverage
+---------------------
+Coverage can be calculated on module filter: 
+
+```
+gradle test jacocoTestReport
+```
 
 [travis]:https://travis-ci.org/jszczepankiewicz/redmonkey
 [travis img]:https://travis-ci.org/jszczepankiewicz/redmonkey.svg?branch=master

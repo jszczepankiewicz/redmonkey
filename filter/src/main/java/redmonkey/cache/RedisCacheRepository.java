@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by urwisy on 2015-04-01.
+ * Created by jszczepankiewicz on 2015-04-01.
  */
 public class RedisCacheRepository implements CacheRepository {
 
@@ -19,7 +19,7 @@ public class RedisCacheRepository implements CacheRepository {
     private final String host;
     private final int port;
 
-    private static final CacheResult NO_RESULT_FOUND = new CacheResult(true, null, null);
+    public static final CacheResult NO_RESULT_FOUND = new CacheResult(true, null, null);
     private static final CacheResult RESULT_FOUND_BUT_NOT_CHANGED = new CacheResult(false, null, null);
 
     public RedisCacheRepository(JedisPoolConfig poolConfig, String host, int port){

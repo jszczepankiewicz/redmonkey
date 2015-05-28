@@ -1,8 +1,4 @@
 rootProject.name = 'RedisServletFilter'
-
 include 'filter'
-
 include 'application-example'
-
-include 'benchmark'
 

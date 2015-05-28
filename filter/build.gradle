@@ -1,10 +1,22 @@
 apply plugin: 'java'
+apply plugin: "jacoco"
 
 sourceCompatibility = 1.8
 version = '1.0'
 
 repositories {
     mavenCentral()
+}
+
+jacocoTestReport {
+    group = "Reporting"
+    description = "Generate Jacoco coverage reports after running tests."
+    additionalSourceDirs = files(sourceSets.main.allJava.srcDirs)
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
 }
 
 dependencies {

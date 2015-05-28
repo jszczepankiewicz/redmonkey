@@ -1,7 +1,7 @@
 package redmonkey.cache;
 
 /**
- * Created by urwisy on 2015-04-06.
+ * Created by jszczepankiewicz on 2015-04-06.
  */
 public class Strings {
     public static void recycle(StringBuilder builder){

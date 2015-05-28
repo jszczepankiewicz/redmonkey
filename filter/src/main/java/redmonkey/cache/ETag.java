@@ -3,6 +3,7 @@ package redmonkey.cache;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static java.lang.String.valueOf;
 import static redmonkey.cache.Strings.recycle;
 import static java.lang.System.currentTimeMillis;
 
@@ -14,7 +15,7 @@ public class ETag {
     public static final String ETAG_REQUEST_HEADER = "If-None-Match";
     public static final String ETAG_RESPONSE_HEADER = "ETag";
 
-    public static final int SIZEOF_ETAG = String.valueOf(Long.MAX_VALUE + '-' + Integer.MAX_VALUE).length();
+    public static final int SIZEOF_ETAG = valueOf(Long.MAX_VALUE + '-' + Integer.MAX_VALUE).length();
 
     /**
      * Returns fast etag for given String.
