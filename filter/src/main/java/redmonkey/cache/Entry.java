@@ -9,10 +9,11 @@ public class Entry extends HashMap<String, String>{
 
     public static final String ENTRY_VALUE = "v";
     public static final String ENTRY_ETAG = "e";
+    public static final String ENTRY_CONTENT_TYPE = "c";
 
-    public Entry(String content, String etag){
+    public Entry(String content, String etag, String contentType){
 
-        super(2);
+        super(3);
 
         if(content == null){
             throw new NullPointerException("Content to put into cache should not be null");
@@ -22,8 +23,13 @@ public class Entry extends HashMap<String, String>{
             throw new NullPointerException("Etag to put into cache should not be null");
         }
 
+        if(contentType == null){
+            throw new NullPointerException("Content type should not be null");
+        }
+
         this.put(ENTRY_ETAG, etag);
         this.put(ENTRY_VALUE, content);
+        this.put(ENTRY_CONTENT_TYPE, contentType);
     }
 
     public String getContent(){
@@ -34,4 +40,7 @@ public class Entry extends HashMap<String, String>{
         return get(ENTRY_ETAG);
     }
 
+    public String getContentType() {
+        return get(ENTRY_CONTENT_TYPE);
+    }
 }

@@ -377,12 +377,12 @@ public class CachingFilterTest {
 
 
     private CacheResult storedValueDifferentThanClient(){
-        CacheResult result = new CacheResult(false, "{somepayload}", "assumedNewerEtag");
+        CacheResult result = new CacheResult(false, "{somepayload}", "assumedNewerEtag", "x");
         return result;
     }
 
     private CacheResult storedValueSameAsOnClientSide() {
-        CacheResult result = new CacheResult(false, null, null);
+        CacheResult result = new CacheResult(false, null, null, "x");
         return result;
     }
 

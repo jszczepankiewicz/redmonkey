@@ -11,12 +11,12 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static redmonkey.BadmonkeyLibraryAssertions.assertThat;
-import static redmonkey.cache.ETag.SIZEOF_ETAG;
-import static redmonkey.cache.Entry.ENTRY_ETAG;
-import static redmonkey.cache.Entry.ENTRY_VALUE;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.slf4j.LoggerFactory.getLogger;
+import static redmonkey.BadmonkeyLibraryAssertions.assertThat;
+import static redmonkey.cache.ETag.SIZEOF_ETAG;
+import static redmonkey.cache.Entry.*;
+import static redmonkey.cache.TestValues.UTF8_JSON;
 
 /**
  * Integration test that will assume that redis server for testing will be run on localhost on default port.
@@ -52,10 +52,10 @@ public class RedisCacheRepositoryTest {
         String etag = ETag.of(JSON_SAVED, etagBuilder);
 
         //  when
-        repo.upsert(KEY, JSON_SAVED, etag, 999, TimeUnit.HOURS);
+        repo.upsert(KEY, JSON_SAVED, etag, UTF8_JSON, 999, TimeUnit.HOURS);
 
         //  then
-        assertValueExist(KEY, etag, JSON_SAVED);
+        assertValueExist(KEY, etag, JSON_SAVED, UTF8_JSON);
 
     }
 
@@ -63,15 +63,15 @@ public class RedisCacheRepositoryTest {
     public void upsertValueEvenIfKeyExistsWithDifferentEtag() {
 
         //  given
-        havingEntryCached(KEY, JSON_SAVED, "someetagxyz");
+        havingEntryCached(KEY, JSON_SAVED, "someetagxyz", UTF8_JSON);
         final String newContent = "[]";
         final String newEtag = ETag.of(newContent, etagBuilder);
 
         //  when
-        repo.upsert(KEY, newContent, newEtag, 999, TimeUnit.HOURS);
+        repo.upsert(KEY, newContent, newEtag, UTF8_JSON, 999, TimeUnit.HOURS);
 
         //  then
-        assertValueExist(KEY, newEtag, newContent);
+        assertValueExist(KEY, newEtag, newContent, UTF8_JSON);
     }
 
 
@@ -101,7 +101,7 @@ public class RedisCacheRepositoryTest {
 
         //  given
         String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting);
+        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON);
 
         //  when
         CacheResult result = repo.fetchIfChanged(KEY, null);
@@ -119,7 +119,7 @@ public class RedisCacheRepositoryTest {
 
         //  given
         String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting);
+        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON);
 
         //  when
         CacheResult result = repo.fetchIfChanged(KEY, etagExisting);
@@ -137,7 +137,7 @@ public class RedisCacheRepositoryTest {
 
         //  given
         String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting);
+        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON);
 
         //  when
         CacheResult result = repo.fetchIfChanged(KEY, "someolderetag");
@@ -149,7 +149,7 @@ public class RedisCacheRepositoryTest {
 
     @Ignore
     @Test
-    public void removeKeyIfExist(){
+    public void removeKeyIfExist() {
 
     }
 
@@ -159,12 +159,12 @@ public class RedisCacheRepositoryTest {
         return new Jedis("localhost");
     }
 
-    private void havingEntryCached(String key, String content, String etag) {
+    private void havingEntryCached(String key, String content, String etag, String contentType) {
         Jedis jedis = getJedis();
-        jedis.hmset(key, new Entry(content, etag));
+        jedis.hmset(key, new Entry(content, etag, contentType));
     }
 
-    private void assertValueExist(String key, String expectedEtag, String expectedContent) {
+    private void assertValueExist(String key, String expectedEtag, String expectedContent, String expectedContentType) {
         Jedis jedis = getJedis();
 
         long start = System.nanoTime();
@@ -172,9 +172,11 @@ public class RedisCacheRepositoryTest {
         System.out.println("hash get took (ms): " + (System.nanoTime() - start) / 1000000);
 
         assertThat(out).isNotEmpty()
-                .hasSize(2)
+                .hasSize(3)
                 .contains(entry(ENTRY_VALUE, expectedContent))
-                .contains(entry(ENTRY_ETAG, expectedEtag));
+                .contains(entry(ENTRY_ETAG, expectedEtag))
+                .contains(entry(ENTRY_CONTENT_TYPE, expectedContentType))
+        ;
     }
 
 }

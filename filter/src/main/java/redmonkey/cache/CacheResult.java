@@ -1,18 +1,20 @@
 package redmonkey.cache;
 
 /**
- * Created by urwisy on 2015-04-01.
+ * Created by jszczepankiewicz on 2015-04-01.
  */
 public class CacheResult {
 
     private final boolean upsertNeeded;
     private final String payload;
     private final String storedEtag;
+    private final String contentType;
 
-    public CacheResult(boolean upsertNeeded, String payload, String storedEtag) {
+    public CacheResult(boolean upsertNeeded, String payload, String storedEtag, String contentType) {
         this.upsertNeeded = upsertNeeded;
         this.payload = payload;
         this.storedEtag = storedEtag;
+        this.contentType = contentType;
     }
 
     public boolean isUpsertNeeded() {
@@ -25,5 +27,9 @@ public class CacheResult {
 
     public String getStoredEtag() {
         return storedEtag;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 }

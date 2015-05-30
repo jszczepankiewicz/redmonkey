@@ -371,13 +371,9 @@ public class PatternedUrl {
 
         long nanoStart = System.nanoTime();
 
-        Probes.HeapMemory.startCollecting();
-
         for (String url : urls) {
             matcher.matches(url);
         }
-
-        Probes.HeapMemory.stopCollectingAndPrint();
 
         long duration = System.nanoTime() - nanoStart;
         long sam = duration / ((long) loop);
@@ -388,11 +384,10 @@ public class PatternedUrl {
         Pattern pat = Pattern.compile("/api/v1/bestsellers/\\d+");
 
         nanoStart = System.nanoTime();
-        Probes.HeapMemory.startCollecting();
+
         for (String url : urls) {
             pat.matcher(url).matches();
         }
-        Probes.HeapMemory.stopCollectingAndPrint();
 
         duration = System.nanoTime() - nanoStart;
         sam = duration / ((long) loop);

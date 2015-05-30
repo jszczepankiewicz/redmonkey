@@ -5,9 +5,10 @@ import org.junit.rules.ExpectedException;
 import org.junit.Test;
 
 import static redmonkey.BadmonkeyLibraryAssertions.assertThat;
+import static redmonkey.cache.TestValues.UTF8_JSON;
 
 /**
- * Created by urwisy on 2015-04-11.
+ * Created by jszczepankiewicz on 2015-04-11.
  */
 public class EntryTest {
 
@@ -22,7 +23,7 @@ public class EntryTest {
         thrown.expectMessage("Content to put into cache should not be null");
 
         //  when
-        new Entry(null, "sometag");
+        new Entry(null, "sometag", UTF8_JSON);
     }
 
     @Test
@@ -33,7 +34,7 @@ public class EntryTest {
         thrown.expectMessage("Etag to put into cache should not be null");
 
         //  when
-        new Entry("sometag", null);
+        new Entry("sometag", null, UTF8_JSON);
     }
 
     @Test
@@ -44,7 +45,7 @@ public class EntryTest {
         final String etag = "980";
 
         //  when
-        Entry entry = new Entry(content, etag);
+        Entry entry = new Entry(content, etag, UTF8_JSON);
 
         //  then
         assertThat(entry).hasContent(content).hasEtag(etag);

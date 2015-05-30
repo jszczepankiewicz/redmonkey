@@ -7,6 +7,10 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static redmonkey.cache.Entry.ENTRY_CONTENT_TYPE;
+import static redmonkey.cache.Entry.ENTRY_ETAG;
+import static redmonkey.cache.Entry.ENTRY_VALUE;
+
 /**
  * Created by jszczepankiewicz on 2015-04-01.
  */
@@ -19,8 +23,8 @@ public class RedisCacheRepository implements CacheRepository {
     private final String host;
     private final int port;
 
-    public static final CacheResult NO_RESULT_FOUND = new CacheResult(true, null, null);
-    private static final CacheResult RESULT_FOUND_BUT_NOT_CHANGED = new CacheResult(false, null, null);
+    public static final CacheResult NO_RESULT_FOUND = new CacheResult(true, null, null, null);
+    private static final CacheResult RESULT_FOUND_BUT_NOT_CHANGED = new CacheResult(false, null, null, null);
 
     public RedisCacheRepository(JedisPoolConfig poolConfig, String host, int port){
 
@@ -43,7 +47,7 @@ public class RedisCacheRepository implements CacheRepository {
             return NO_RESULT_FOUND;
         }
 
-        return new CacheResult(false, out.get(Entry.ENTRY_VALUE), out.get(Entry.ENTRY_ETAG));
+        return new CacheResult(false, out.get(ENTRY_VALUE), out.get(ENTRY_ETAG), out.get(ENTRY_CONTENT_TYPE));
     }
 
     @Override
@@ -59,7 +63,7 @@ public class RedisCacheRepository implements CacheRepository {
             /*
                 get value of etag assuming key exists. This is less costly as checking if key exists and get
              */
-            String cachedEtag = jedis.hget(key, Entry.ENTRY_ETAG);
+            String cachedEtag = jedis.hget(key, ENTRY_ETAG);
 
             if(cachedEtag == null){
                 return NO_RESULT_FOUND;
@@ -79,13 +83,13 @@ public class RedisCacheRepository implements CacheRepository {
     }
 
     @Override
-    public void upsert(String key, String content, String etag, long ttl, TimeUnit ttlUnit) {
+    public void upsert(String key, String content, String etag, String contentType, long ttl, TimeUnit ttlUnit) {
 
         long start = System.nanoTime();
 
         try (Jedis jedis = pool.getResource()) {
             //  todo refactor to have multicommand?
-            jedis.hmset(key, new Entry(content, etag));
+            jedis.hmset(key, new Entry(content, etag, contentType));
             if(ttl>0){
                 jedis.expire(key, (int)ttlUnit.toSeconds(ttl));
             }

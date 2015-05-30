@@ -62,7 +62,7 @@ public class CachingFilter implements Filter{
                 //  caching response for future use
                 String generated = baos.toString("UTF-8");
                 LOG.debug("generated content of size: {}", generated.length());
-                cache.upsert(key, generated, ETag.of(generated, new StringBuilder(SIZEOF_ETAG)), cacheRegion.getTtl(), cacheRegion.getTtlUnit());
+                cache.upsert(key, generated, ETag.of(generated, new StringBuilder(SIZEOF_ETAG)), res.getContentType(), cacheRegion.getTtl(), cacheRegion.getTtlUnit());
                 //  now we need to copy from generated stream into original stream
                 res.getOutputStream().write(baos.toByteArray());
                 res.getOutputStream().flush();
@@ -78,6 +78,7 @@ public class CachingFilter implements Filter{
                     //  client has old version, we need to sent him latest one
                     response.setStatus(SC_OK);
                     ETag.set(response, result.getStoredEtag());
+                    res.setContentType(result.getContentType());
                     res.getOutputStream().write(result.getPayload().getBytes());
                     res.getOutputStream().flush();
                 }

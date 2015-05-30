@@ -9,7 +9,7 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * Created by urwisy on 2015-03-26.
+ * Created by jszczepankiewicz on 2015-03-26.
  */
 public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
 
