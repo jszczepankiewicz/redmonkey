@@ -17,8 +17,6 @@ import static redmonkey.cache.Entry.ENTRY_VALUE;
 public class RedisCacheRepository implements CacheRepository {
 
     private final JedisPool pool;
-
-
     private final JedisPoolConfig poolConfig;
     private final String host;
     private final int port;

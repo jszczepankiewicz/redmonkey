@@ -13,7 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by urwisy on 2015-03-26.
+ * Created by jszczepankiewicz on 2015-03-26.
  */
 public class ResponseCacheByURIBuilderTest {
 
@@ -22,7 +22,7 @@ public class ResponseCacheByURIBuilderTest {
 
         //  given
         Config conf = ConfigFactory.load("badmonkey-test");
-        KeyStrategy keyStrategy = new URIKeyStrategy();
+        KeyStrategy keyStrategy = new NamespacedURIKeyStrategy("tst");
 
         //  when
         ResponseCacheByURIPolicy policy = ResponseCacheByURIBuilder.build(conf);

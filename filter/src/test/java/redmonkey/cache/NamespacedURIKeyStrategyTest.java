@@ -12,14 +12,16 @@ import static org.mockito.Mockito.when;
  * @author jszczepankiewicz
  * @since 2015-04-17
  */
-public class URIKeyStrategyTest {
+public class NamespacedURIKeyStrategyTest {
+
+    private static final String NAMESPACE = "rm";
 
     @Test
     public void twoInstancesShouldBeEqual(){
 
         //  given
-        URIKeyStrategy keyStrategy1 = new URIKeyStrategy();
-        URIKeyStrategy keyStrategy2 = new URIKeyStrategy();
+        NamespacedURIKeyStrategy keyStrategy1 = new NamespacedURIKeyStrategy(NAMESPACE);
+        NamespacedURIKeyStrategy keyStrategy2 = new NamespacedURIKeyStrategy(NAMESPACE);
 
         //  when
         int hashCode1 = keyStrategy1.hashCode();
@@ -31,18 +33,18 @@ public class URIKeyStrategyTest {
     }
 
     @Test
-    public void generatedKeyShouldBeEqualToRequestURI(){
+    public void generatedKeyShouldBeEqualToRequestURIWithNamespace(){
 
         //  given
         final String uri = "/v1/superduper/xyz";
         final HttpServletRequest req = forURI(uri);
-        final KeyStrategy keyStrategy = new URIKeyStrategy();
+        final KeyStrategy keyStrategy = new NamespacedURIKeyStrategy(NAMESPACE);
 
         //  when
         String key = keyStrategy.keyFor(req);
 
         //  then
-        assertThat(key).isEqualTo(uri);
+        assertThat(key).isEqualTo(NAMESPACE + ":" + uri);
     }
 
     private HttpServletRequest forURI(final String uri) {

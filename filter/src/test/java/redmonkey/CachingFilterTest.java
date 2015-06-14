@@ -48,6 +48,7 @@ import static redmonkey.cache.RedisCacheRepository.NO_RESULT_FOUND;
 public class CachingFilterTest {
 
     private static final String CACHEABLE_URI = "/api/v1/customer/123";
+    private static final String TEST_NAMESPACE = "rm-tst";
     private CachingFilter filter;
 
 
@@ -425,7 +426,7 @@ public class CachingFilterTest {
     }
 
     private CacheRegion cacheableRegion() {
-        CacheRegion region = new CacheRegion(999, TimeUnit.DAYS, new URIKeyStrategy());
+        CacheRegion region = new CacheRegion(999, TimeUnit.DAYS, new NamespacedURIKeyStrategy(TEST_NAMESPACE));
         return region;
     }
 

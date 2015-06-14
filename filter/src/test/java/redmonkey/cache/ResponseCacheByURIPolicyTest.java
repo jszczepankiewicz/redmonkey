@@ -80,7 +80,7 @@ public class ResponseCacheByURIPolicyTest {
 
     private Map<PatternedUrl, CacheRegion> havingCacheRegions() {
         Map<PatternedUrl, CacheRegion> regions = new ConcurrentHashMap<>();
-        KeyStrategy keyStrategy = new URIKeyStrategy();
+        KeyStrategy keyStrategy = new NamespacedURIKeyStrategy("");
         CacheRegion region1 = new CacheRegion(100, MINUTES, keyStrategy);
         CacheRegion region2 = new CacheRegion(30, SECONDS, keyStrategy);
         regions.put(new PatternedUrl(SOME_CACHED_URI_PATTERN), region1);

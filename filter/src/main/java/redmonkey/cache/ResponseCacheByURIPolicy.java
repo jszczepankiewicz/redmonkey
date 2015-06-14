@@ -1,12 +1,14 @@
 package redmonkey.cache;
 
 import redmonkey.PatternedUrl;
+import redmonkey.cache.CacheRegion.Cacheability;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
+import static redmonkey.cache.NamespacedURIKeyStrategy.keyStrategyWithEmptyNamespace;
 
 /**
  * Created by jszczepankiewicz on 2015-03-26.
@@ -19,7 +21,7 @@ public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
     public static final CacheRegion PASSTHROUGH;
 
     static{
-        PASSTHROUGH = new CacheRegion(0, null, CacheRegion.Cacheability.PASSTHROUGH, new URIKeyStrategy());
+        PASSTHROUGH = new CacheRegion(0, null, Cacheability.PASSTHROUGH, keyStrategyWithEmptyNamespace());
     }
 
     public ResponseCacheByURIPolicy(Map<PatternedUrl, CacheRegion> regions) {
