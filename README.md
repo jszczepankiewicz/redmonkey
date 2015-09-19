@@ -12,7 +12,7 @@ TODO: cleanings:
 - unused imports
 '
 - IMPLEMENT: 
-a) remove hardcoded UTF-8 encoding
+a) remove hardcoded UTF-8 contentType
 b) add multitenancy
 similar concept to: https://github.com/TrigonicSolutions/jedis-namespace
 why we do not use it? because if we control the application level we may do this much simpler than using this complex

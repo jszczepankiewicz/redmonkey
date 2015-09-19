@@ -20,13 +20,17 @@ jacocoTestReport {
 }
 
 dependencies {
+    compile 'net.jcip:jcip-annotations:1.0'
     compile libraries.slf4j_api
     compile libraries.servlet_api
     compile libraries.jedis
     compile libraries.typesafe_config
+
+    testCompile 'org.apache.httpcomponents:httpclient:4.5'
     testCompile libraries.junit
     testCompile libraries.mockito_core
     testCompile libraries.assertj_core
     testCompile libraries.powermock_module_junit4
     testCompile libraries.powermock_api_mockito
+
 }

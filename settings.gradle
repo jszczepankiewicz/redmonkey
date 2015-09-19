@@ -1,4 +1,4 @@
-rootProject.name = 'RedisServletFilter'
+rootProject.name = 'dynks'
 include 'filter'
-include 'application-example'
+include 'integration-tests'
 

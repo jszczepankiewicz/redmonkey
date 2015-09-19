@@ -1,0 +1,16 @@
+TODO:
+- finish perfomance debug tracking
+- remove unused tests
+- remove powermock dependencies
+- refactor packages
+- add more tests (for encoding & type)
+- remove UTF8 hardcoded in filter
+- automate IT testing
+- check on travis the results
+- clean up dependencies (so that external tools will have access to that)
+- add checkstyle
+- add findbugs / pmd checks
+- handle sitepage
+- add documentation
+
+DONE:
