@@ -1,6 +1,7 @@
 package dynks.cache;
 
 import com.typesafe.config.ConfigFactory;
+import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;

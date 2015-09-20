@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static dynks.cache.ETag.ETAG_REQUEST_HEADER;
+import static dynks.http.ETag.ETAG_REQUEST_HEADER;
 
 /**
  * Creates HttpServletRequest for usage in tests using mockito mocking.

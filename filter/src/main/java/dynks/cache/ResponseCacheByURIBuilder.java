@@ -1,6 +1,6 @@
 package dynks.cache;
 
-import dynks.PatternedUrl;
+import dynks.URIMatcher;
 import com.typesafe.config.Config;
 import org.slf4j.Logger;
 
@@ -21,7 +21,7 @@ public class ResponseCacheByURIBuilder {
     public static ResponseCacheByURIPolicy build(Config config) {
 
         List<? extends Config> configuredRegions = config.getConfigList("redmonkey.regions");
-        Map<PatternedUrl, CacheRegion> regions = new HashMap<>(configuredRegions.size());
+        Map<URIMatcher, CacheRegion> regions = new HashMap<>(configuredRegions.size());
         String namespace = config.getString("redmonkey.namespace");
         NamespacedURIKeyStrategy keyStrategy = new NamespacedURIKeyStrategy(namespace);
 
@@ -29,7 +29,7 @@ public class ResponseCacheByURIBuilder {
             //  for now only URIKeyStrategy supported
             CacheRegion cached = new CacheRegion(region.getDuration("ttl", MILLISECONDS), MILLISECONDS,keyStrategy);
             String url = region.getString("pattern");
-            regions.put(new PatternedUrl(url), cached);
+            regions.put(new URIMatcher(url), cached);
             LOG.debug("Loaded cached region against: {} with ttl: {} {}", url, cached.getTtl(), cached.getTtlUnit());
         }
 

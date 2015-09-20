@@ -3,6 +3,8 @@ package dynks;
 import java.util.regex.Pattern;
 
 import static java.lang.Character.MIN_VALUE;
+import static java.lang.String.format;
+import static java.util.regex.Pattern.compile;
 
 /**
  * Matcher for strings using very small subset of regexp. All operations are done without allocating any objects on heap
@@ -39,11 +41,11 @@ import static java.lang.Character.MIN_VALUE;
  * <li>...{S}{S}... - this can be just transformed to ...{S}...</li>
  * </ul>
  */
-public class PatternedUrl {
+public class URIMatcher {
 
     private final String pattern;
 
-    public PatternedUrl(String pattern) {
+    public URIMatcher(String pattern) {
 
         validatePattern(pattern);
         this.pattern = pattern.trim();
@@ -129,7 +131,7 @@ public class PatternedUrl {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        PatternedUrl that = (PatternedUrl) o;
+        URIMatcher that = (URIMatcher) o;
 
         return pattern.equals(that.pattern);
 
@@ -143,16 +145,16 @@ public class PatternedUrl {
     /**
      * Checks without allocation objects on heap (including TLAB) whether url matches pattern using simplified regexp notion.
      *
-     * @param url
+     * @param uri
      * @return
      */
-    public boolean matches(final String url) {
+    public boolean matches(final String uri) {
 
-        if (url == null) {
+        if (uri == null) {
             throw new NullPointerException("String to match can not be null");
         }
 
-        if ("".equals(url)) {
+        if ("".equals(uri)) {
             return "".equals(pattern);
         }
 
@@ -194,11 +196,11 @@ public class PatternedUrl {
         }
 
         //  we have now first character from pattern loaded
-        final int urlLength = url.length();
+        final int urlLength = uri.length();
 
         for (int i = 0; i < urlLength; i++) {
 
-            final char c = url.charAt(i);
+            final char c = uri.charAt(i);
 
             if (expectedNumber) {
                 if (c >= '0' && c <= '9') {
@@ -345,7 +347,7 @@ public class PatternedUrl {
         } else if (special == 'S') {
             expected = 'S';
         } else {
-            throw new IllegalArgumentException(String.format("Invalid special character [%s] at position: %d", special, patternCursorPosition));
+            throw new IllegalArgumentException(format("Invalid special character [%s] at position: %d", special, patternCursorPosition));
         }
 
         special = pattern.charAt(patternCursorPosition++);
@@ -353,16 +355,21 @@ public class PatternedUrl {
         if (special == '}') {
             return expected;
         } else {
-            throw new IllegalArgumentException(String.format("Invalid ending of pattern character [%s] at position: %d", special, patternCursorPosition));
+            throw new IllegalArgumentException(format("Invalid ending of pattern character [%s] at position: %d", special, patternCursorPosition));
         }
     }
 
+    /**
+     * Dirty and far from perfect benchmarking against regexp.
+     *
+     * @param args
+     */
     public static void main(String... args) {
 
         //  last result 63 ns
         final int loop = 10000000;
 
-        PatternedUrl matcher = new PatternedUrl("/api/v1/bestsellers/{D}");
+        URIMatcher matcher = new URIMatcher("/api/v1/bestsellers/{D}");
 
         String[] urls = new String[loop];
         for (int i = 0; i < loop; i++) {
@@ -381,7 +388,7 @@ public class PatternedUrl {
         System.out.println("Duration using simplified logic: " + sam + " ns");
 
         //  testing using regexp
-        Pattern pat = Pattern.compile("/api/v1/bestsellers/\\d+");
+        Pattern pat = compile("/api/v1/bestsellers/\\d+");
 
         nanoStart = System.nanoTime();
 

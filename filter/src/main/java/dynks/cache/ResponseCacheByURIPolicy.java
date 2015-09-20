@@ -1,6 +1,6 @@
 package dynks.cache;
 
-import dynks.PatternedUrl;
+import dynks.URIMatcher;
 import dynks.cache.CacheRegion.Cacheability;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,8 +15,8 @@ import static dynks.cache.NamespacedURIKeyStrategy.keyStrategyWithEmptyNamespace
  */
 public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
 
-    private final Map<PatternedUrl, CacheRegion> regions;
-    private final Set<PatternedUrl> uris;
+    private final Map<URIMatcher, CacheRegion> regions;
+    private final Set<URIMatcher> uris;
 
     public static final CacheRegion PASSTHROUGH;
 
@@ -24,7 +24,7 @@ public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
         PASSTHROUGH = new CacheRegion(0, null, Cacheability.PASSTHROUGH, keyStrategyWithEmptyNamespace());
     }
 
-    public ResponseCacheByURIPolicy(Map<PatternedUrl, CacheRegion> regions) {
+    public ResponseCacheByURIPolicy(Map<URIMatcher, CacheRegion> regions) {
 
         if (regions == null) {
             throw new NullPointerException("List of cache regions should not be null");
@@ -39,7 +39,7 @@ public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
 
         final String requestURI = request.getRequestURI();
 
-        for (PatternedUrl matcher : uris) {
+        for (URIMatcher matcher : uris) {
             if (matcher.matches(requestURI)) {
                 return regions.get(matcher);
             }
@@ -49,7 +49,7 @@ public class ResponseCacheByURIPolicy implements ResponseCachePolicy {
         return PASSTHROUGH;
     }
 
-    public Map<PatternedUrl, CacheRegion> getRegions() {
+    public Map<URIMatcher, CacheRegion> getRegions() {
         return regions;
     }
 }

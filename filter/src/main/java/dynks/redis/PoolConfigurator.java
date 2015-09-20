@@ -1,4 +1,4 @@
-package dynks;
+package dynks.redis;
 
 import org.slf4j.Logger;
 import redis.clients.jedis.JedisPoolConfig;

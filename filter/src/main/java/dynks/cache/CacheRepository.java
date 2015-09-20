@@ -43,4 +43,10 @@ public interface CacheRepository {
      * @param key value identifier (not null)
      */
     void remove(String key);
+
+
+    /**
+     * Clean up resources.
+     */
+    void dispose();
 }

@@ -1,5 +1,6 @@
 package dynks;
 
+import dynks.redis.PoolConfigurator;
 import org.junit.Test;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -8,7 +9,7 @@ import javax.servlet.FilterConfig;
 import static java.lang.Integer.valueOf;
 import static java.lang.String.valueOf;
 import static dynks.JedisPoolConfigAssert.assertThat;
-import static dynks.PoolConfigurator.*;
+import static dynks.redis.PoolConfigurator.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

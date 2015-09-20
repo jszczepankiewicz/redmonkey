@@ -3,6 +3,8 @@ package dynks;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import dynks.ProbeFactory.Probe;
+import dynks.http.ETag;
+import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.slf4j.Logger;
 import dynks.cache.*;
 
@@ -13,16 +15,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static dynks.ProbeFactory.getProbe;
-import static dynks.cache.ETag.writeToResponse;
+import static dynks.http.ETag.*;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
 import static dynks.cache.CacheRegion.Cacheability.PASSTHROUGH;
-import static dynks.cache.ETag.SIZEOF_ETAG;
 import static dynks.http.HttpMethod.GET;
 
 /**
- * TODO: add response content encoding
  *
  * @author jszczepankiewicz
  * @since 2015-04-14
@@ -64,8 +64,10 @@ public class CachingFilter implements Filter {
                 }
 
                 String key = cacheRegion.getKeyStrategy().keyFor(request);
-                String requestEtag = ETag.get(request);
+                String requestEtag = getFrom(request);
+                probe.start('f');
                 CacheQueryResult result = cache.fetchIfChanged(key, requestEtag);
+                probe.stop();
 
                 if (result.isUpsertNeeded()) {
                     probe.log("upsert");
@@ -76,13 +78,13 @@ public class CachingFilter implements Filter {
                     //  caching response for future use
                     String generated = baos.toString("UTF-8");
                     probe.log(baos.size());
-                    String etag = ETag.of(generated, new StringBuilder(SIZEOF_ETAG));
+                    String etag = of(generated, new StringBuilder(SIZEOF_ETAG));
                     probe.log(etag);
                     probe.log("upsert");
                     probe.start('u');
                     cache.upsert(key, generated, etag, res.getContentType(), cacheRegion.getTtl(), cacheRegion.getTtlUnit());
                     probe.stop();
-                    writeToResponse(response, etag);
+                    writeIn(response, etag);
                     //  now we need to copy from generated stream into original stream
                     res.getOutputStream().write(baos.toByteArray());
                     res.getOutputStream().flush();
@@ -97,7 +99,7 @@ public class CachingFilter implements Filter {
                     } else {
                         //  client has old version, we need to sent him latest one
                         response.setStatus(SC_OK);
-                        writeToResponse(response, result.getStoredEtag());
+                        writeIn(response, result.getStoredEtag());
                         res.setContentType(result.getContentType());
                         res.getOutputStream().write(result.getPayload().getBytes());
                         res.getOutputStream().flush();
@@ -123,6 +125,9 @@ public class CachingFilter implements Filter {
 
     @Override
     public void destroy() {
-        //TODO: cache repository shutdown
+
+        if(cache!=null){
+            cache.dispose();
+        }
     }
 }

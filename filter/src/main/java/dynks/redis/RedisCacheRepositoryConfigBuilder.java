@@ -1,4 +1,4 @@
-package dynks.cache;
+package dynks.redis;
 
 import com.typesafe.config.Config;
 import org.slf4j.Logger;

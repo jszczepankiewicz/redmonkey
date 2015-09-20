@@ -12,7 +12,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
-import static dynks.cache.ETag.ETAG_RESPONSE_HEADER;
+import static dynks.http.ETag.ETAG_RESPONSE_HEADER;
 
 /**
  * @author jszczepankiewicz

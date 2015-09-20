@@ -1,4 +1,4 @@
-package dynks.cache;
+package dynks.http;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,12 +40,12 @@ public class ETag {
 
     }
 
-    public static String get(HttpServletRequest request){
+    public static String getFrom(HttpServletRequest request){
         return request.getHeader(ETAG_REQUEST_HEADER);
     }
 
 
-    public static void writeToResponse(HttpServletResponse response, String value){
+    public static void writeIn(HttpServletResponse response, String value){
         response.addHeader(ETAG_RESPONSE_HEADER, value);
     }
 

@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import static org.apache.http.impl.client.HttpClients.createDefault;
 import static org.assertj.core.util.Preconditions.checkNotNullOrEmpty;
-import static dynks.cache.ETag.ETAG_REQUEST_HEADER;
-import static dynks.cache.ETag.ETAG_RESPONSE_HEADER;
+import static dynks.http.ETag.ETAG_REQUEST_HEADER;
+import static dynks.http.ETag.ETAG_RESPONSE_HEADER;
 
 /**
  * Http client using in integration testing.

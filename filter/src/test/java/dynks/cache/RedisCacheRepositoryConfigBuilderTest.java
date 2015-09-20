@@ -2,6 +2,8 @@ package dynks.cache;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import dynks.redis.RedisCacheRepository;
+import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.junit.Test;
 
 import static dynks.cache.test.DynksAssertions.assertThat;

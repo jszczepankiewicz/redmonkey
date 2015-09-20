@@ -1,12 +1,13 @@
 package dynks.cache;
 
 
+import dynks.http.ETag;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static dynks.cache.ETag.*;
+import static dynks.http.ETag.*;
 import static dynks.cache.test.DynksAssertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -24,7 +25,7 @@ public class ETagTest {
         final HttpServletRequest request = forURIWithEtagHeader(etagHeader);
 
         //  when
-        String etagFromRequest = ETag.get(request);
+        String etagFromRequest = ETag.getFrom(request);
 
         //  then
         assertThat(etagFromRequest).isEqualTo(etagHeader);
@@ -38,7 +39,7 @@ public class ETagTest {
         final String value = "someEtag";
 
         //  when
-        writeToResponse(response, value);
+        writeIn(response, value);
 
         //  then
         verify(response).addHeader(ETAG_RESPONSE_HEADER, value);

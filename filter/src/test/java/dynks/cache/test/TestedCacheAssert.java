@@ -2,7 +2,7 @@ package dynks.cache.test;
 
 import org.assertj.core.api.AbstractAssert;
 import org.mockito.ArgumentCaptor;
-import dynks.cache.ETag;
+import dynks.http.ETag;
 import dynks.cache.TestValues;
 import dynks.cache.TestedCache;
 

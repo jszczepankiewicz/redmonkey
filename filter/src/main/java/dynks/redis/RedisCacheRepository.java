@@ -1,5 +1,8 @@
-package dynks.cache;
+package dynks.redis;
 
+import dynks.cache.CacheQueryResult;
+import dynks.cache.CacheRepository;
+import dynks.cache.Entry;
 import org.slf4j.Logger;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -118,6 +121,15 @@ public class RedisCacheRepository implements CacheRepository {
     @Override
     public void remove(String key) {
 
+    }
+
+    @Override
+    public void dispose() {
+        LOG.info("Destroying redis connection pool...");
+
+        if(pool != null){
+            pool.destroy();
+        }
     }
 
     public JedisPoolConfig getPoolConfig() {

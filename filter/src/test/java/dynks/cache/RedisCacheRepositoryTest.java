@@ -1,6 +1,9 @@
 package dynks.cache;
 
 import com.typesafe.config.ConfigFactory;
+import dynks.http.ETag;
+import dynks.redis.RedisCacheRepository;
+import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -17,7 +20,7 @@ import static org.assertj.core.data.MapEntry.entry;
 import static org.junit.rules.ExpectedException.none;
 import static org.slf4j.LoggerFactory.getLogger;
 import static dynks.cache.test.DynksAssertions.assertThat;
-import static dynks.cache.ETag.SIZEOF_ETAG;
+import static dynks.http.ETag.SIZEOF_ETAG;
 import static dynks.cache.Entry.*;
 import static dynks.cache.TestValues.UTF8_JSON;
 

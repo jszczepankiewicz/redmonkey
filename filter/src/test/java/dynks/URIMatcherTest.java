@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 
 
-public class PatternedUrlTest {
+public class URIMatcherTest {
 
     @Rule
     public ExpectedException thrown = none();
@@ -18,7 +18,7 @@ public class PatternedUrlTest {
     public void matchStringAtTheEnd(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{S}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{S}");
 
         //  when
         boolean matched1 = pattern.matches("/bestsellers/a");
@@ -35,7 +35,7 @@ public class PatternedUrlTest {
     public void matchStringInTheMiddle(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/users/{S}/sessions");
+        URIMatcher pattern = new URIMatcher("/users/{S}/sessions");
 
         //  when
         boolean matched1 = pattern.matches("/users/John/sessions");
@@ -52,7 +52,7 @@ public class PatternedUrlTest {
     public void matchStringOnStart(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{S}01234");
+        URIMatcher pattern = new URIMatcher("{S}01234");
 
         //  when
         boolean matched1 = pattern.matches("super01234");
@@ -69,7 +69,7 @@ public class PatternedUrlTest {
     public void matchWithOneNumberAfterString(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{S}0");
+        URIMatcher pattern = new URIMatcher("{S}0");
 
         //  when
         boolean matched1 = pattern.matches("super0");
@@ -87,7 +87,7 @@ public class PatternedUrlTest {
     public void matchOnlyString(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{S}");
+        URIMatcher pattern = new URIMatcher("{S}");
 
         //  when
         boolean matched1 = pattern.matches("super");
@@ -104,7 +104,7 @@ public class PatternedUrlTest {
     public void notMatchEmptyUrlToNumberPattern(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}");
+        URIMatcher pattern = new URIMatcher("{D}");
 
         //  when
         boolean matched1 = pattern.matches("");
@@ -118,7 +118,7 @@ public class PatternedUrlTest {
     public void matchEmptyUrlToEmptyPattern(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("");
+        URIMatcher pattern = new URIMatcher("");
 
         //  when
         boolean matched1 = pattern.matches("");
@@ -131,7 +131,7 @@ public class PatternedUrlTest {
     @Test
     public void notMatchIfNumberExpectedAtEndButNotFound(){
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}");
 
         //  when
         boolean notMatched4 = pattern.matches("/bestsellers/");
@@ -148,7 +148,7 @@ public class PatternedUrlTest {
         thrown.expectMessage("Unsupported special character (X) at position: 14");
 
         //  when
-        new PatternedUrl("/bestsellers/{X}");
+        new URIMatcher("/bestsellers/{X}");
     }
 
     @Test
@@ -159,7 +159,7 @@ public class PatternedUrlTest {
         thrown.expectMessage("Unfinished closure");
 
         //  when
-        new PatternedUrl("/bestsellers/{D");
+        new URIMatcher("/bestsellers/{D");
     }
 
 
@@ -171,14 +171,14 @@ public class PatternedUrlTest {
         thrown.expectMessage("Invalid syntax ({) at position: 14");
 
         //  when
-        new PatternedUrl("/bestsellers/{{D}");
+        new URIMatcher("/bestsellers/{{D}");
     }
 
     @Test
     public void throwIllegalArgumentExceptionOnMalformedStart2(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/}{D}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/}{D}");
 
         //  when
         boolean notMatched4 = pattern.matches("/bestsellers/");
@@ -190,7 +190,7 @@ public class PatternedUrlTest {
     @Test
     public void throwIllegalArgumentExceptionOnMalformedEnd2(){
 //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}}");
 
         //  when
         boolean notMatched4 = pattern.matches("/bestsellers/");
@@ -202,7 +202,7 @@ public class PatternedUrlTest {
     @Test
     public void throwIllegalArgumentExceptionOnMalformedEnd(){
 //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}{");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}{");
 
         //  when
         boolean notMatched4 = pattern.matches("/bestsellers/");
@@ -216,7 +216,7 @@ public class PatternedUrlTest {
     public void matchOnlyNumber(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}");
+        URIMatcher pattern = new URIMatcher("{D}");
 
         //  when
         boolean matched1 = pattern.matches("0");
@@ -230,7 +230,7 @@ public class PatternedUrlTest {
     @Test
     public void matchStringAfterNumberWithSeparator(){
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}-{S}");
+        URIMatcher pattern = new URIMatcher("{D}-{S}");
 
         //  when
         boolean matched1 = pattern.matches("0-a");
@@ -244,7 +244,7 @@ public class PatternedUrlTest {
     @Test
     public void matchNumberAfterStringWithSeparator(){
         //  given
-        PatternedUrl pattern = new PatternedUrl("{S}-{D}");
+        URIMatcher pattern = new URIMatcher("{S}-{D}");
 
         //  when
         boolean matched1 = pattern.matches("a-0");
@@ -258,7 +258,7 @@ public class PatternedUrlTest {
     @Test
     public void matchWithNumberOnStart(){
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}abcdef");
+        URIMatcher pattern = new URIMatcher("{D}abcdef");
 
         //  when
         boolean matched1 = pattern.matches("0abcdef");
@@ -273,7 +273,7 @@ public class PatternedUrlTest {
     public void matchNumberAfterNumberWithSeparator(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}-{D}");
+        URIMatcher pattern = new URIMatcher("{D}-{D}");
 
         //  when
         boolean matched1 = pattern.matches("0-0");
@@ -288,7 +288,7 @@ public class PatternedUrlTest {
     public void notMatchNumberAfterNumberWithoutSeparator(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}{D}");
+        URIMatcher pattern = new URIMatcher("{D}{D}");
 
         //  when
         boolean matched1 = pattern.matches("00");
@@ -303,7 +303,7 @@ public class PatternedUrlTest {
     public void notMatchEmptyStringIfNumberExpected(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("{D}");
+        URIMatcher pattern = new URIMatcher("{D}");
 
         //  when
         boolean nonMatched = pattern.matches("");
@@ -316,7 +316,7 @@ public class PatternedUrlTest {
     public void notMatchIfNumberExpectedAtEndButMoreFound(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}");
 
         //  when
         boolean notMatched1 = pattern.matches("/bestsellers/1a");
@@ -329,7 +329,7 @@ public class PatternedUrlTest {
     public void notMatchIfNumberExpectedAtEndButNonNumberFound(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}");
 
         //  when
         boolean notMatched1 = pattern.matches("/bestsellers/a");
@@ -348,7 +348,7 @@ public class PatternedUrlTest {
     public void notMatchNumberAtEnd(){
 
         //  given
-        PatternedUrl pattern = new PatternedUrl("/bestsellers/{D}");
+        URIMatcher pattern = new URIMatcher("/bestsellers/{D}");
 
         //  when
         boolean notMatched6 = pattern.matches("/1");

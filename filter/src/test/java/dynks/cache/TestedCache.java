@@ -1,6 +1,8 @@
 package dynks.cache;
 
 import com.typesafe.config.ConfigFactory;
+import dynks.redis.RedisCacheRepository;
+import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.mockito.ArgumentMatcher;
 import org.powermock.api.mockito.PowerMockito;
 import org.slf4j.Logger;

@@ -1,7 +1,7 @@
 package dynks.cache;
 
 
-import dynks.PatternedUrl;
+import dynks.URIMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -78,13 +78,13 @@ public class ResponseCacheByURIPolicyTest {
         assertThat(region).hasTtl(100).hasTtlUnit(MINUTES).hasVolatility(CACHED);
     }
 
-    private Map<PatternedUrl, CacheRegion> havingCacheRegions() {
-        Map<PatternedUrl, CacheRegion> regions = new ConcurrentHashMap<>();
+    private Map<URIMatcher, CacheRegion> havingCacheRegions() {
+        Map<URIMatcher, CacheRegion> regions = new ConcurrentHashMap<>();
         KeyStrategy keyStrategy = new NamespacedURIKeyStrategy("");
         CacheRegion region1 = new CacheRegion(100, MINUTES, keyStrategy);
         CacheRegion region2 = new CacheRegion(30, SECONDS, keyStrategy);
-        regions.put(new PatternedUrl(SOME_CACHED_URI_PATTERN), region1);
-        regions.put(new PatternedUrl("/something"), region2);
+        regions.put(new URIMatcher(SOME_CACHED_URI_PATTERN), region1);
+        regions.put(new URIMatcher("/something"), region2);
         return regions;
     }
 
