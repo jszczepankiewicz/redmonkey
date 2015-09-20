@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Created by urwisy on 2015-03-20.
+ * Created by jszczepankiewicz on 2015-03-20.
  */
 public class CachedResponseStream extends ServletOutputStream {
     protected boolean closed = false;

@@ -14,14 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static dynks.cache.TestValues.UTF8_JSON;
 import static dynks.cache.TestValues.UTF8_PLAIN;
 import static dynks.http.HttpMethod.GET;
 
 
 /**
- * Main caching filter test. Due to high amount of mocking behaviour attempted to build simple DSL to simplify testing.
+ * Main caching filter test. Due to high amount of mocking behaviour attempted to getProbe simple DSL to simplify testing.
  *
  * @author jszczepankiewicz
  * @since 2015-06-14

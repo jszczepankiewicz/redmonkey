@@ -4,10 +4,10 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.junit.Test;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 
 /**
- * Created by urwisy on 2015-04-01.
+ * Created by jszczepankiewicz on 2015-04-01.
  */
 public class RedisCacheRepositoryConfigBuilderTest {
 

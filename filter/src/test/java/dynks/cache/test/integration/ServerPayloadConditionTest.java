@@ -2,7 +2,7 @@ package dynks.cache.test.integration;
 
 import org.junit.Test;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 
 /**
  * @author jszczepankiewicz

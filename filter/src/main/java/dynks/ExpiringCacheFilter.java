@@ -13,7 +13,7 @@ import java.io.IOException;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Created by urwisy on 2015-03-16.
+ * Created by jszczepankiewicz on 2015-03-16.
  */
 public class ExpiringCacheFilter implements Filter {
 

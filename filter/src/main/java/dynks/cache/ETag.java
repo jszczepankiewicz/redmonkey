@@ -8,7 +8,7 @@ import static dynks.cache.Strings.recycle;
 import static java.lang.System.currentTimeMillis;
 
 /**
- * Created by urwisy on 2015-04-06.
+ * Created by jszczepankiewicz on 2015-04-06.
  */
 public class ETag {
 

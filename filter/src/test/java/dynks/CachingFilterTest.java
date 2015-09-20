@@ -28,7 +28,7 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static dynks.cache.RedisCacheRepository.NO_RESULT_FOUND;
 
 /**

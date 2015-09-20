@@ -1,6 +1,8 @@
 TODO:
 - finish perfomance debug tracking
 - remove unused tests
+- remove unused classes
+- rething package names
 - remove powermock dependencies
 - refactor packages
 - add more tests (for encoding & type)
@@ -12,5 +14,8 @@ TODO:
 - add findbugs / pmd checks
 - handle sitepage
 - add documentation
+- review gradle best practices
+- add release plugin
+- release to maven central repo (with sources)
 
 DONE:

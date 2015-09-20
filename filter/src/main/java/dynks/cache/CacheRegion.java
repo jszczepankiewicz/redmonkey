@@ -7,7 +7,7 @@ import static dynks.cache.CacheRegion.Cacheability.CACHED;
 import static java.util.Objects.hash;
 
 /**
- * Created by urwisy on 2015-03-26.
+ * Created by jszczepankiewicz on 2015-03-26.
  */
 public class CacheRegion {
 

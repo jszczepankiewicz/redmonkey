@@ -3,7 +3,7 @@ package dynks.cache;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by urwisy on 2015-04-01.
+ * Created by jszczepankiewicz on 2015-04-01.
  */
 public interface CacheRepository {
 

@@ -6,7 +6,7 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static dynks.cache.ETag.ETAG_REQUEST_HEADER;
 import static org.mockito.Mockito.*;
 

@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

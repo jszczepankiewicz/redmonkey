@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static dynks.cache.CacheRegion.Cacheability.CACHED;
 import static dynks.cache.CacheRegion.Cacheability.PASSTHROUGH;
 import static java.util.Collections.EMPTY_MAP;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by urwisy on 2015-03-26.
+ * Created by jszczepankiewicz on 2015-03-26.
  */
 public class ResponseCacheByURIPolicyTest {
 

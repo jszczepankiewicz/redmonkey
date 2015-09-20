@@ -4,7 +4,7 @@ import org.assertj.core.api.AbstractAssert;
 import org.assertj.core.util.Objects;
 
 /**
- * Created by urwisy on 2015-04-11.
+ * Created by jszczepankiewicz on 2015-04-11.
  */
 public class EntryAssert extends AbstractAssert<EntryAssert, Entry> {
 

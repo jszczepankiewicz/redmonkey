@@ -12,9 +12,9 @@ import dynks.cache.test.integration.ServerResponseAssert;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by urwisy on 2015-03-26.
+ * Created by jszczepankiewicz on 2015-03-26.
  */
-public class BadmonkeyLibraryAssertions extends Assertions {
+public class DynksAssertions extends Assertions {
 
     /**
      * An entry point for ServerResponseAssert to follow AssertJ standard <code>assertThat()</code> statements.<br>

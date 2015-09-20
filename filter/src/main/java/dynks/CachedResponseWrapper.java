@@ -9,7 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 /**
- * Created by urwisy on 2015-03-20.
+ * Created by jszczepankiewicz on 2015-03-20.
  */
 public class CachedResponseWrapper extends HttpServletResponseWrapper {
 

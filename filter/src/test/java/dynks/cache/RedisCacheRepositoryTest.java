@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.data.MapEntry.entry;
 import static org.junit.rules.ExpectedException.none;
 import static org.slf4j.LoggerFactory.getLogger;
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static dynks.cache.ETag.SIZEOF_ETAG;
 import static dynks.cache.Entry.*;
 import static dynks.cache.TestValues.UTF8_JSON;

@@ -7,7 +7,7 @@ import redis.clients.jedis.JedisPoolConfig;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * Created by urwisy on 2015-04-01.
+ * Created by jszczepankiewicz on 2015-04-01.
  */
 public class RedisCacheRepositoryConfigBuilder {
 

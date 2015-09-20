@@ -1,7 +1,7 @@
 package dynks;
 
 /**
- * Created by urwisy on 2015-03-17.
+ * Created by jszczepankiewicz on 2015-03-17.
  */
 public class PatternedUrlRegion implements Region{
 

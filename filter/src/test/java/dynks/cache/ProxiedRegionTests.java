@@ -19,7 +19,7 @@ import java.util.Collection;
 import static dynks.cache.TestValues.ALL_POSSIBLE_HTTP_METHODS;
 import static dynks.cache.TestValues.FROM_BOOK_LIST;
 import static dynks.cache.TestValues.UTF8_JSON;
-import static dynks.cache.test.BadmonkeyLibraryAssertions.assertThat;
+import static dynks.cache.test.DynksAssertions.assertThat;
 
 /**
  * Tests that refers to regions explicitely specified as proxied and thus non-cached.
