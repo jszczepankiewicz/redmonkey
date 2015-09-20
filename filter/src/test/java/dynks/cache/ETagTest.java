@@ -6,8 +6,8 @@ import org.junit.Test;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static dynks.cache.ETag.*;
 import static dynks.cache.test.DynksAssertions.assertThat;
-import static dynks.cache.ETag.ETAG_REQUEST_HEADER;
 import static org.mockito.Mockito.*;
 
 /**
@@ -38,17 +38,17 @@ public class ETagTest {
         final String value = "someEtag";
 
         //  when
-        ETag.set(response, value);
+        writeToResponse(response, value);
 
         //  then
-        verify(response).addHeader(ETag.ETAG_RESPONSE_HEADER, value);
+        verify(response).addHeader(ETAG_RESPONSE_HEADER, value);
     }
 
     @Test
     public void shouldGenerateEtagFromValue() {
 
         //  given
-        StringBuilder builder = new StringBuilder(ETag.SIZEOF_ETAG);
+        StringBuilder builder = new StringBuilder(SIZEOF_ETAG);
         String someValue1 = "{something1}";
         String someValue2 = "{something2}";
 

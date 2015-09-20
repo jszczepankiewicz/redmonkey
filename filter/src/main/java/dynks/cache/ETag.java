@@ -45,7 +45,7 @@ public class ETag {
     }
 
 
-    public static void set(HttpServletResponse response, String value){
+    public static void writeToResponse(HttpServletResponse response, String value){
         response.addHeader(ETAG_RESPONSE_HEADER, value);
     }
 

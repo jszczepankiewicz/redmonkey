@@ -2,6 +2,7 @@ package dynks;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import dynks.ProbeFactory.Probe;
 import org.slf4j.Logger;
 import dynks.cache.*;
 
@@ -11,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import static dynks.ProbeFactory.getProbe;
+import static dynks.cache.ETag.writeToResponse;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -46,17 +49,17 @@ public class CachingFilter implements Filter {
 
 
         if (GET.equalsIgnoreCase(request.getMethod())) {
-            StringBuilder logbuff = new StringBuilder(600);
+
+            Probe probe = getProbe(LOG);
 
             try {
-                logbuff.append(request.getRequestURI());
-                logbuff.append("|");
+                probe.log(request.getRequestURI());
 
                 CacheRegion cacheRegion = policy.getfor(request);
 
                 if (cacheRegion.getCacheability() == PASSTHROUGH) {
                     chain.doFilter(req, res);
-                    logbuff.append("passthrough");
+                    probe.log("passthrough");
                     return;
                 }
 
@@ -65,24 +68,21 @@ public class CachingFilter implements Filter {
                 CacheQueryResult result = cache.fetchIfChanged(key, requestEtag);
 
                 if (result.isUpsertNeeded()) {
-                    logbuff.append("upsert|");
+                    probe.log("upsert");
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     CachedResponseWrapper wrappedResponse = new CachedResponseWrapper(response, baos);
                     //  invoking "production" of content from underlying resources
                     chain.doFilter(req, wrappedResponse);
                     //  caching response for future use
                     String generated = baos.toString("UTF-8");
-                    logbuff.append(baos.size());
-                    logbuff.append("b|");
+                    probe.log(baos.size());
                     String etag = ETag.of(generated, new StringBuilder(SIZEOF_ETAG));
-                    logbuff.append(etag);
-                    logbuff.append("|");
-                    long start = System.nanoTime();
+                    probe.log(etag);
+                    probe.log("upsert");
+                    probe.start('u');
                     cache.upsert(key, generated, etag, res.getContentType(), cacheRegion.getTtl(), cacheRegion.getTtlUnit());
-                    logbuff.append("upsert:");
-                    logbuff.append((System.nanoTime() - start) / 1000);
-                    logbuff.append("us|");
-                    ETag.set(response, etag);
+                    probe.stop();
+                    writeToResponse(response, etag);
                     //  now we need to copy from generated stream into original stream
                     res.getOutputStream().write(baos.toByteArray());
                     res.getOutputStream().flush();
@@ -92,20 +92,20 @@ public class CachingFilter implements Filter {
                     if (result.getStoredEtag() == null) {
                         //  client already has latest version
                         response.setStatus(SC_NOT_MODIFIED);
-                        logbuff.append("not-changed");
+                        probe.log("not-changed");
                         return;
                     } else {
                         //  client has old version, we need to sent him latest one
                         response.setStatus(SC_OK);
-                        ETag.set(response, result.getStoredEtag());
+                        writeToResponse(response, result.getStoredEtag());
                         res.setContentType(result.getContentType());
                         res.getOutputStream().write(result.getPayload().getBytes());
                         res.getOutputStream().flush();
-                        logbuff.append("changed");
+                        probe.log("changed");
                     }
                 }
             } finally {
-                LOG.debug(logbuff.toString());
+                probe.flushLog();
             }
         } else {
             //  passthrough anything else than GET without checking & saving in cache
@@ -113,6 +113,12 @@ public class CachingFilter implements Filter {
             return;
         }
 
+    }
+
+    private void doFilter(FilterChain chain, Probe probe, ServletRequest req, ServletResponse res) throws IOException, ServletException {
+        probe.start('g');
+        chain.doFilter(req, res);
+        probe.stop();
     }
 
     @Override

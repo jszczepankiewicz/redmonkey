@@ -39,6 +39,9 @@ public class ProbeFactory {
         void stop();
         /** adds debug line*/
         void log(String activity);
+
+        void log(int value);
+        void log(long value);
         /** prints logs*/
         void flushLog();
     }
@@ -58,6 +61,12 @@ public class ProbeFactory {
 
         @Override
         public void flushLog() {}
+
+        @Override
+        public void log(int value) {}
+
+        @Override
+        public void log(long value) {}
     }
 
     static class DebugProbe implements Probe {
@@ -100,6 +109,16 @@ public class ProbeFactory {
             trackingBuffer.append(" µs|");
             trackingBuffer.append(activityBuffer.toString());
             log.debug(trackingBuffer.toString());
+        }
+
+        @Override
+        public void log(int value) {
+            log(String.valueOf(value));
+        }
+
+        @Override
+        public void log(long value) {
+            log(String.valueOf(value));
         }
     }
 }

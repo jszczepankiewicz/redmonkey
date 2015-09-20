@@ -74,7 +74,19 @@ public class DebugProbeTest {
     }
 
     @Test
-    public void should
+    public void shouldNotFailWithOnlyLogEntries(){
+
+        //  given
+        Logger log = debugEnabledLogger();
+        Probe probe = getProbe(log);
+        probe.log("sssssomething");
+
+        //  when
+        probe.flushLog();
+
+        //  then
+        //  there is no exception
+    }
 
     @Test
     public void timeAndActivitiesShouldBeLoggedForDebugLogger() throws InterruptedException {
