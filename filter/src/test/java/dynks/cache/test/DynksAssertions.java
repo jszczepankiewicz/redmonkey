@@ -26,10 +26,6 @@ public class DynksAssertions extends Assertions {
         return new ServerResponseAssert(actual);
     }
 
-    public static TestedCacheAssert assertThat(TestedCache actual) {
-        return new TestedCacheAssert(actual);
-    }
-
     public static HttpServletResponseAssert assertThat(HttpServletResponse actual) {return new HttpServletResponseAssert(actual);}
 
     /**
