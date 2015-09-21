@@ -3,7 +3,7 @@ package dynks;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import dynks.ProbeFactory.Probe;
-import dynks.http.ETag;
+import dynks.http.CachedResponseWrapper;
 import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.slf4j.Logger;
 import dynks.cache.*;

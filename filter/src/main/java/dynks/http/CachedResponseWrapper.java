@@ -1,4 +1,4 @@
-package dynks;
+package dynks.http;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;

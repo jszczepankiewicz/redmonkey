@@ -4,7 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static java.lang.String.valueOf;
-import static dynks.cache.Strings.recycle;
+import static dynks.Strings.recycle;
 import static java.lang.System.currentTimeMillis;
 
 /**
