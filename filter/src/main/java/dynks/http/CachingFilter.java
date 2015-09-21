@@ -1,9 +1,8 @@
-package dynks;
+package dynks.http;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import dynks.ProbeFactory.Probe;
-import dynks.http.CachedResponseWrapper;
 import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.slf4j.Logger;
 import dynks.cache.*;

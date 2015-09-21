@@ -31,7 +31,7 @@ public class ProbeFactory {
         }
     }
 
-    interface Probe {
+    public interface Probe {
 
         /** starts tracking time for given category */
         void start(char category);
