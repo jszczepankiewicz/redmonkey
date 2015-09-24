@@ -20,9 +20,9 @@ public class ResponseCacheByURIBuilder {
 
     public static ResponseCacheByURIPolicy build(Config config) {
 
-        List<? extends Config> configuredRegions = config.getConfigList("redmonkey.regions");
+        List<? extends Config> configuredRegions = config.getConfigList("dynks.regions");
         Map<URIMatcher, CacheRegion> regions = new HashMap<>(configuredRegions.size());
-        String namespace = config.getString("redmonkey.namespace");
+        String namespace = config.getString("dynks.namespace");
         NamespacedURIKeyStrategy keyStrategy = new NamespacedURIKeyStrategy(namespace);
 
         for (Config region : configuredRegions) {

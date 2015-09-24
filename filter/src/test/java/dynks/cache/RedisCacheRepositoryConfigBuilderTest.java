@@ -17,7 +17,7 @@ public class RedisCacheRepositoryConfigBuilderTest {
     public void loadConfiguration() {
 
         //  given
-        Config conf = ConfigFactory.load("badmonkey-test");
+        Config conf = ConfigFactory.load("dynks-test");
 
         //  when
         RedisCacheRepository repo = RedisCacheRepositoryConfigBuilder.build(conf);
@@ -42,7 +42,7 @@ public class RedisCacheRepositoryConfigBuilderTest {
 
         //  given
         //  in fact this is reading default values from default JedisConfig
-        Config conf = ConfigFactory.load("badmonkey-default-test");
+        Config conf = ConfigFactory.load("dynks-default-test");
 
         //  when
         RedisCacheRepository repo = RedisCacheRepositoryConfigBuilder.build(conf);

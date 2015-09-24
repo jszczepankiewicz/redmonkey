@@ -35,7 +35,7 @@ public class CachingFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        Config config = ConfigFactory.load("redmonkey");
+        Config config = ConfigFactory.load("dynks");
         cache = RedisCacheRepositoryConfigBuilder.build(config);
         policy = ResponseCacheByURIBuilder.build(config);
     }

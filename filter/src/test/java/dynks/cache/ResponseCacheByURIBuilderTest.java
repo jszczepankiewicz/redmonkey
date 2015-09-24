@@ -21,7 +21,7 @@ public class ResponseCacheByURIBuilderTest {
     public void shouldLoadConfigurationFromFileOnClasspath() {
 
         //  given
-        Config conf = ConfigFactory.load("badmonkey-test");
+        Config conf = ConfigFactory.load("dynks-test");
         KeyStrategy keyStrategy = new NamespacedURIKeyStrategy("tst");
 
         //  when

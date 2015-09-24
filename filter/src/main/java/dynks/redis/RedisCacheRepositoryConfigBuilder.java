@@ -15,54 +15,54 @@ public class RedisCacheRepositoryConfigBuilder {
 
     public static RedisCacheRepository build(Config config) {
 
-        String host = config.getString("redmonkey.redis.host");
-        int port = config.getInt("redmonkey.redis.port");
-        LOG.info("Connecting to redis at {}:{}", host, port);
+        String host = config.getString("dynks.redis.host");
+        int port = config.getInt("dynks.redis.port");
+        LOG.info("Will connect to redis at {}:{}", host, port);
 
         JedisPoolConfig poolConfig = new JedisPoolConfig();
-        final String testOnBorrow = "redmonkey.redis.pool.testConnectionOnBorrow";
+        final String testOnBorrow = "dynks.redis.pool.testConnectionOnBorrow";
         if(config.hasPath(testOnBorrow)) {
             poolConfig.setTestOnBorrow(config.getBoolean(testOnBorrow));
         }
         LOG.debug("\tTestOnBorrow: {}", poolConfig.getTestOnBorrow());
 
-        final String testOnReturn = "redmonkey.redis.pool.testConnectionOnReturn";
+        final String testOnReturn = "dynks.redis.pool.testConnectionOnReturn";
         if(config.hasPath(testOnReturn)) {
             poolConfig.setTestOnReturn(config.getBoolean(testOnReturn));
         }
         LOG.debug("\tTestOnReturn: {}", poolConfig.getTestOnReturn());
 
-        final String testWhileIdle = "redmonkey.redis.pool.testWhileIdle";
+        final String testWhileIdle = "dynks.redis.pool.testWhileIdle";
         if(config.hasPath(testWhileIdle)) {
             poolConfig.setTestWhileIdle(config.getBoolean(testWhileIdle));
         }
         LOG.debug("\tTestWhileIdle: {}", poolConfig.getTestWhileIdle());
 
-        final String maxConnections = "redmonkey.redis.pool.maxTotalConnectionsToCache";
+        final String maxConnections = "dynks.redis.pool.maxTotalConnectionsToCache";
         if(config.hasPath(maxConnections)) {
             poolConfig.setMaxTotal(config.getInt(maxConnections));
         }
         LOG.debug("\tMaxTotal: {}", poolConfig.getMaxTotal());
 
-        final String maxIdle = "redmonkey.redis.pool.maxIdle";
+        final String maxIdle = "dynks.redis.pool.maxIdle";
         if(config.hasPath(maxIdle)) {
             poolConfig.setMaxIdle(config.getInt(maxIdle));
         }
         LOG.debug("\tMaxIdle: {}", poolConfig.getMaxIdle());
 
-        final String minIdle = "redmonkey.redis.pool.minIdle";
+        final String minIdle = "dynks.redis.pool.minIdle";
         if(config.hasPath(minIdle)) {
             poolConfig.setMinIdle(config.getInt(minIdle));
         }
         LOG.debug("\tMinIdle: {}", poolConfig.getMinIdle());
 
-        final String numTestsPerEviction = "redmonkey.redis.pool.numberOfTestsPerEvictionRun";
+        final String numTestsPerEviction = "dynks.redis.pool.numberOfTestsPerEvictionRun";
         if(config.hasPath(numTestsPerEviction)) {
             poolConfig.setNumTestsPerEvictionRun(config.getInt(numTestsPerEviction));
         }
         LOG.debug("\tNumTestsPerEvictionRun: {}", poolConfig.getNumTestsPerEvictionRun());
 
-        final String timeBetweenEviction = "redmonkey.redis.pool.msBetweenEvictionRuns";
+        final String timeBetweenEviction = "dynks.redis.pool.msBetweenEvictionRuns";
         if(config.hasPath(timeBetweenEviction)) {
             poolConfig.setTimeBetweenEvictionRunsMillis(config.getInt(timeBetweenEviction));
         }
