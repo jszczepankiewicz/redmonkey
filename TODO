@@ -1,6 +1,4 @@
 TODO:
-- rename all configs to use "dynks" instead of old obsolete
-
 - add JMX for readonly statistics
 - add hardened mode
 - add invalidation
@@ -23,3 +21,4 @@ TODO:
 - release to maven central repo (with sources)
 
 [DONE] remove unused classes
+[DONE] rename all configs to use "dynks" instead of old obsolete
