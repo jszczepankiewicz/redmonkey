@@ -5,13 +5,11 @@ TODO:
 - add JMX for write operations
 - finish perfomance debug tracking
 - remove unused tests
-- rething package names
 - refactor packages
 - add more tests (for encoding & type)
 - remove UTF8 hardcoded in filter
 - automate IT testing
 - check on travis the results
-- clean up dependencies (so that external tools will have access to that)
 - add checkstyle
 - add findbugs / pmd checks
 - handle sitepage
@@ -22,3 +20,5 @@ TODO:
 
 [DONE] remove unused classes
 [DONE] rename all configs to use "dynks" instead of old obsolete
+[DONE] rething package names
+[DONE] clean up dependencies (so that external tools will have access to that)

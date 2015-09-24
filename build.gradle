@@ -7,10 +7,3 @@ repositories {
     mavenCentral()
 }
 
-allprojects{
-    apply from: "$rootDir/dependencies.gradle"
-}
-
-dependencies {
-    testCompile libraries.junit
-}

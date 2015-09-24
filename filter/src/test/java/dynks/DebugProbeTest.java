@@ -63,7 +63,7 @@ public class DebugProbeTest {
         //  given
         Logger log = debugEnabledLogger();
         Probe probe = getProbe(log);
-        probe.start('x');
+        probe.start('c');
         probe.stop();
 
         //  when
