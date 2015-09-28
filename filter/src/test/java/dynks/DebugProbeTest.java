@@ -9,6 +9,7 @@ import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 
 import static dynks.ProbeFactory.getProbe;
+import static java.lang.System.nanoTime;
 import static java.lang.Thread.sleep;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.mock;
@@ -86,6 +87,29 @@ public class DebugProbeTest {
 
         //  then
         //  there is no exception
+    }
+
+    @Test
+    public void timeShouldBeLoggedForStopWithArguments() throws InterruptedException{
+
+        //  given
+        Logger log = debugEnabledLogger();
+        Probe probe = getProbe(log);
+
+        //  when
+        probe.log("starting");
+        long nanoStart = nanoTime();
+        sleep(2);
+        probe.stop('s', nanoStart);
+        probe.log("executing");
+        nanoStart = nanoTime();
+        sleep(0, 150);
+        probe.stop('e', nanoStart);
+        probe.log("finishing");
+
+        //  then
+        probe.flushLog();
+        assertThat(getLoggedValue(log)).matches("s:\\d+,e:\\d+ µs\\|starting\\|executing\\|finishing\\|");
     }
 
     @Test

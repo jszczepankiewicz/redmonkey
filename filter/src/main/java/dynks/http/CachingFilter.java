@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import static dynks.ProbeFactory.getProbe;
 import static dynks.http.ETag.*;
+import static java.lang.System.nanoTime;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -43,21 +44,23 @@ public class CachingFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-        HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
+        final HttpServletRequest request = (HttpServletRequest) req;
+        final HttpServletResponse response = (HttpServletResponse) res;
 
 
         if (GET.equalsIgnoreCase(request.getMethod())) {
 
-            Probe probe = getProbe(LOG);
+            final Probe probe = getProbe(LOG);
+            final long nanoStart = nanoTime();
 
             try {
+
                 probe.log(request.getRequestURI());
 
                 CacheRegion cacheRegion = policy.getfor(request);
 
                 if (cacheRegion.getCacheability() == PASSTHROUGH) {
-                    chain.doFilter(req, res);
+                    doFiltering(chain, probe, req, res);
                     probe.log("passthrough");
                     return;
                 }
@@ -73,7 +76,7 @@ public class CachingFilter implements Filter {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     CachedResponseWrapper wrappedResponse = new CachedResponseWrapper(response, baos);
                     //  invoking "production" of content from underlying resources
-                    chain.doFilter(req, wrappedResponse);
+                    doFiltering(chain, probe, req, wrappedResponse);
                     //  caching response for future use
                     String generated = baos.toString("UTF-8");
                     probe.log(baos.size());
@@ -106,17 +109,18 @@ public class CachingFilter implements Filter {
                     }
                 }
             } finally {
+                probe.stop('a', nanoStart);
                 probe.flushLog();
             }
         } else {
-            //  passthrough anything else than GET without checking & saving in cache
+            //  passthrough anything else than GET without checking & saving in cache, not even logging perf
             chain.doFilter(req, res);
             return;
         }
 
     }
 
-    private void doFilter(FilterChain chain, Probe probe, ServletRequest req, ServletResponse res) throws IOException, ServletException {
+    private void doFiltering(FilterChain chain, Probe probe, ServletRequest req, ServletResponse res) throws IOException, ServletException {
         probe.start('g');
         chain.doFilter(req, res);
         probe.stop();
