@@ -21,49 +21,49 @@ public class RedisCacheRepositoryConfigBuilder {
 
         JedisPoolConfig poolConfig = new JedisPoolConfig();
         final String testOnBorrow = "dynks.redis.pool.testConnectionOnBorrow";
-        if(config.hasPath(testOnBorrow)) {
+        if (config.hasPath(testOnBorrow)) {
             poolConfig.setTestOnBorrow(config.getBoolean(testOnBorrow));
         }
         LOG.debug("\tTestOnBorrow: {}", poolConfig.getTestOnBorrow());
 
         final String testOnReturn = "dynks.redis.pool.testConnectionOnReturn";
-        if(config.hasPath(testOnReturn)) {
+        if (config.hasPath(testOnReturn)) {
             poolConfig.setTestOnReturn(config.getBoolean(testOnReturn));
         }
         LOG.debug("\tTestOnReturn: {}", poolConfig.getTestOnReturn());
 
         final String testWhileIdle = "dynks.redis.pool.testWhileIdle";
-        if(config.hasPath(testWhileIdle)) {
+        if (config.hasPath(testWhileIdle)) {
             poolConfig.setTestWhileIdle(config.getBoolean(testWhileIdle));
         }
         LOG.debug("\tTestWhileIdle: {}", poolConfig.getTestWhileIdle());
 
         final String maxConnections = "dynks.redis.pool.maxTotalConnectionsToCache";
-        if(config.hasPath(maxConnections)) {
+        if (config.hasPath(maxConnections)) {
             poolConfig.setMaxTotal(config.getInt(maxConnections));
         }
         LOG.debug("\tMaxTotal: {}", poolConfig.getMaxTotal());
 
         final String maxIdle = "dynks.redis.pool.maxIdle";
-        if(config.hasPath(maxIdle)) {
+        if (config.hasPath(maxIdle)) {
             poolConfig.setMaxIdle(config.getInt(maxIdle));
         }
         LOG.debug("\tMaxIdle: {}", poolConfig.getMaxIdle());
 
         final String minIdle = "dynks.redis.pool.minIdle";
-        if(config.hasPath(minIdle)) {
+        if (config.hasPath(minIdle)) {
             poolConfig.setMinIdle(config.getInt(minIdle));
         }
         LOG.debug("\tMinIdle: {}", poolConfig.getMinIdle());
 
         final String numTestsPerEviction = "dynks.redis.pool.numberOfTestsPerEvictionRun";
-        if(config.hasPath(numTestsPerEviction)) {
+        if (config.hasPath(numTestsPerEviction)) {
             poolConfig.setNumTestsPerEvictionRun(config.getInt(numTestsPerEviction));
         }
         LOG.debug("\tNumTestsPerEvictionRun: {}", poolConfig.getNumTestsPerEvictionRun());
 
         final String timeBetweenEviction = "dynks.redis.pool.msBetweenEvictionRuns";
-        if(config.hasPath(timeBetweenEviction)) {
+        if (config.hasPath(timeBetweenEviction)) {
             poolConfig.setTimeBetweenEvictionRunsMillis(config.getInt(timeBetweenEviction));
         }
         LOG.debug("\tTimeBetweenEvictionRunsMillis: {}", poolConfig.getTimeBetweenEvictionRunsMillis());
