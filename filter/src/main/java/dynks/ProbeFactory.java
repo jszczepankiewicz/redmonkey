@@ -110,7 +110,7 @@ public class ProbeFactory {
         public void start(char category) {
 
             if (nanoStart > 0) {
-                trackingBuffer.append(',');
+                trackingBuffer.append(' ');
             }
 
             trackingBuffer.append(category);
@@ -122,7 +122,7 @@ public class ProbeFactory {
         public void stop(char category, long nanoStart) {
 
             if (this.nanoStart > 0) {
-                trackingBuffer.append(',');
+                trackingBuffer.append(' ');
             }
 
             this.nanoStart = nanoStart;
@@ -145,7 +145,7 @@ public class ProbeFactory {
 
         @Override
         public void flushLog() {
-            trackingBuffer.append(" µs|");
+            trackingBuffer.append(" Âµs|");
             trackingBuffer.append(activityBuffer.toString());
             log.debug(trackingBuffer.toString());
         }

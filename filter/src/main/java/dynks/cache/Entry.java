@@ -5,42 +5,53 @@ import java.util.HashMap;
 /**
  * Cache content extending directly from HashMap to being able to be provided directly without conversion to jedis.
  */
-public class Entry extends HashMap<String, String>{
+public class Entry extends HashMap<String, String> {
 
-    public static final String ENTRY_VALUE = "v";
-    public static final String ENTRY_ETAG = "e";
-    public static final String ENTRY_CONTENT_TYPE = "c";
+    public static final String PAYLOAD = "v";
+    public static final String ETAG = "e";
+    public static final String CONTENT_TYPE = "c";
+    public static final String ENCODING = "d";
 
-    public Entry(String content, String etag, String contentType){
+
+    public Entry(String content, String etag, String contentType, String encoding) {
 
         super(3);
 
-        if(content == null){
+        if (content == null) {
             throw new NullPointerException("Content to put into cache should not be null");
         }
 
-        if(etag == null){
+        if (etag == null) {
             throw new NullPointerException("Etag to put into cache should not be null");
         }
 
-        if(contentType == null){
+        if (contentType == null) {
             throw new NullPointerException("Content type should not be null");
         }
 
-        this.put(ENTRY_ETAG, etag);
-        this.put(ENTRY_VALUE, content);
-        this.put(ENTRY_CONTENT_TYPE, contentType);
+        if (encoding == null) {
+            throw new NullPointerException("Encoding should not be null");
+        }
+
+        this.put(ETAG, etag);
+        this.put(PAYLOAD, content);
+        this.put(CONTENT_TYPE, contentType);
+        this.put(ENCODING, encoding);
     }
 
-    public String getContent(){
-        return get(ENTRY_VALUE);
+    public String getContent() {
+        return get(PAYLOAD);
     }
 
-    public String getEtag(){
-        return get(ENTRY_ETAG);
+    public String getEtag() {
+        return get(ETAG);
     }
 
     public String getContentType() {
-        return get(ENTRY_CONTENT_TYPE);
+        return get(CONTENT_TYPE);
+    }
+
+    public String getEncoding() {
+        return get(ENCODING);
     }
 }

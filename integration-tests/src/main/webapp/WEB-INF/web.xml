@@ -21,7 +21,7 @@
 
     <servlet>
         <servlet-name>GeneratingServlet</servlet-name>
-        <servlet-class>dynks.test.it.SimpleTestServlet</servlet-class>
+        <servlet-class>dynks.test.it.Utf8Servlet</servlet-class>
     </servlet>
 
     <servlet-mapping>

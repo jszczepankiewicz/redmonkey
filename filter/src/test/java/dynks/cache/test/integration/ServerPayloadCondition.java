@@ -16,7 +16,7 @@ import static java.util.regex.Pattern.compile;
  */
 public class ServerPayloadCondition extends Condition<ServerResponse> {
 
-    private static final Pattern PATTERN = compile(".+\\n\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}", UNIX_LINES);
+    private static final Pattern PATTERN = compile(".+\\n\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}\\nąśćźżęłóĄŚĆŻŹĘŁÓ", UNIX_LINES);
 
     @Override
     public boolean matches(ServerResponse response) {

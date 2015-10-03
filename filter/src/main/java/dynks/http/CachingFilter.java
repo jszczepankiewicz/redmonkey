@@ -3,9 +3,9 @@ package dynks.http;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import dynks.ProbeFactory.Probe;
+import dynks.cache.*;
 import dynks.redis.RedisCacheRepositoryConfigBuilder;
 import org.slf4j.Logger;
-import dynks.cache.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +14,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static dynks.ProbeFactory.getProbe;
+import static dynks.cache.CacheRegion.Cacheability.PASSTHROUGH;
 import static dynks.http.ETag.*;
+import static dynks.http.HttpMethod.GET;
 import static java.lang.System.nanoTime;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_MODIFIED;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static org.slf4j.LoggerFactory.getLogger;
-import static dynks.cache.CacheRegion.Cacheability.PASSTHROUGH;
-import static dynks.http.HttpMethod.GET;
 
 /**
- *
  * @author jszczepankiewicz
  * @since 2015-04-14
  */
@@ -78,13 +77,14 @@ public class CachingFilter implements Filter {
                     //  invoking "production" of content from underlying resources
                     doFiltering(chain, probe, req, wrappedResponse);
                     //  caching response for future use
-                    String generated = baos.toString("UTF-8");
+                    String encoding = wrappedResponse.getCharacterEncoding();
+                    String generated = baos.toString(encoding);
                     probe.log(baos.size());
                     String etag = of(generated, new StringBuilder(SIZEOF_ETAG));
                     probe.log(etag);
                     probe.log("upsert");
                     probe.start('u');
-                    cache.upsert(key, generated, etag, res.getContentType(), cacheRegion.getTtl(), cacheRegion.getTtlUnit());
+                    cache.upsert(key, generated, etag, wrappedResponse.getContentType(), encoding, cacheRegion.getTtl(), cacheRegion.getTtlUnit());
                     probe.stop();
                     writeIn(response, etag);
                     //  now we need to copy from generated stream into original stream
@@ -129,7 +129,7 @@ public class CachingFilter implements Filter {
     @Override
     public void destroy() {
 
-        if(cache!=null){
+        if (cache != null) {
             cache.dispose();
         }
     }

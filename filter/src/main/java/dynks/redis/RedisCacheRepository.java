@@ -11,11 +11,8 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.System.nanoTime;
+import static dynks.cache.Entry.*;
 import static org.slf4j.LoggerFactory.getLogger;
-import static dynks.cache.Entry.ENTRY_CONTENT_TYPE;
-import static dynks.cache.Entry.ENTRY_ETAG;
-import static dynks.cache.Entry.ENTRY_VALUE;
 
 /**
  * Created by jszczepankiewicz on 2015-04-01.
@@ -57,7 +54,7 @@ public class RedisCacheRepository implements CacheRepository {
             return NO_RESULT_FOUND;
         }
 
-        return new CacheQueryResult(false, out.get(ENTRY_VALUE), out.get(ENTRY_ETAG), out.get(ENTRY_CONTENT_TYPE));
+        return new CacheQueryResult(false, out.get(PAYLOAD), out.get(ETAG), out.get(CONTENT_TYPE));
     }
 
     @Override
@@ -81,7 +78,7 @@ public class RedisCacheRepository implements CacheRepository {
             /*
                 get value of etag assuming key exists. This is less costly as checking if key exists and get
              */
-            String cachedEtag = jedis.hget(key, ENTRY_ETAG);
+            String cachedEtag = jedis.hget(key, ETAG);
 
             System.out.println("cachedEtag: " + cachedEtag);
 
@@ -103,19 +100,15 @@ public class RedisCacheRepository implements CacheRepository {
     }
 
     @Override
-    public void upsert(String key, String content, String etag, String contentType, long ttl, TimeUnit ttlUnit) {
-
-        long start = nanoTime();
+    public void upsert(String key, String content, String etag, String contentType, String encoding, long ttl, TimeUnit ttlUnit) {
 
         try (Jedis jedis = pool.getResource()) {
-            //  todo refactor to have multicommand?
-            jedis.hmset(key, new Entry(content, etag, contentType));
+            // TODO: transform to multicomand to improve perfomance
+            jedis.hmset(key, new Entry(content, etag, contentType, encoding));
             if(ttl>0){
                 jedis.expire(key, (int)ttlUnit.toSeconds(ttl));
             }
         }
-
-        System.out.println("upsert took (ms): " + (nanoTime() - start)/1_000_000);
     }
 
     @Override

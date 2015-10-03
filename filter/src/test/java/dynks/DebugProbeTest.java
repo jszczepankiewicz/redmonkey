@@ -2,21 +2,18 @@ package dynks;
 
 
 import dynks.ProbeFactory.DebugProbe;
-import dynks.ProbeFactory.Probe;
 import dynks.ProbeFactory.NOPProbe;
+import dynks.ProbeFactory.Probe;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.slf4j.Logger;
 
 import static dynks.ProbeFactory.getProbe;
+import static dynks.cache.test.DynksAssertions.assertThat;
 import static java.lang.System.nanoTime;
 import static java.lang.Thread.sleep;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import static dynks.cache.test.DynksAssertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * @author jszczepankiewicz
@@ -109,7 +106,7 @@ public class DebugProbeTest {
 
         //  then
         probe.flushLog();
-        assertThat(getLoggedValue(log)).matches("s:\\d+,e:\\d+ µs\\|starting\\|executing\\|finishing\\|");
+        assertThat(getLoggedValue(log)).matches("s:\\d+ e:\\d+ Âµs\\|starting\\|executing\\|finishing\\|");
     }
 
     @Test
@@ -132,7 +129,7 @@ public class DebugProbeTest {
 
         //  then
         probe.flushLog();
-        assertThat(getLoggedValue(log)).matches("s:\\d+,e:\\d+ µs\\|starting\\|executing\\|finishing\\|");
+        assertThat(getLoggedValue(log)).matches("s:\\d+ e:\\d+ Âµs\\|starting\\|executing\\|finishing\\|");
 
     }
 

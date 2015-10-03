@@ -16,9 +16,9 @@ public class ServerPayloadConditionTest {
     public void shouldMatchPayloadFromServer(){
 
         //  when
-        boolean matches1 = condition.matches(of("shouldMatchPayloadFromServer\n2015-09-05 08:16:30.822\n"));
-        boolean matches2 = condition.matches(of("shouldMatchPayloadFromServer\n2015-09-05 08:16:30.822"));
-        boolean matches3 = condition.matches(of("\nshouldMatchPayloadFromServer\n2015-09-05 08:16:30.822"));
+        boolean matches1 = condition.matches(of("shouldMatchPayloadFromServer\n2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ\n"));
+        boolean matches2 = condition.matches(of("shouldMatchPayloadFromServer\n2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ"));
+        boolean matches3 = condition.matches(of("\nshouldMatchPayloadFromServer\n2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ"));
 
         //  then
         assertThat(matches1).isTrue();
@@ -30,7 +30,7 @@ public class ServerPayloadConditionTest {
     public void shouldNotMatchNonCompliantDateFormat(){
 
         //  when
-        boolean matches1 = condition.matches(of("shouldNotMatchNonCompliantDateFormat\n2015-09-05 08:16:30\n"));
+        boolean matches1 = condition.matches(of("shouldNotMatchNonCompliantDateFormat\n2015-09-05 08:16:30\nąśćźżęłóĄŚĆŻŹĘŁÓ\n"));
 
         //  then
         assertThat(matches1).isFalse();
@@ -40,9 +40,9 @@ public class ServerPayloadConditionTest {
     public void shouldNotMatchIfUriEmpty(){
 
         //  when
-        boolean matches1 = condition.matches(of("\n2015-09-05 08:16:30.822\n"));
-        boolean matches2 = condition.matches(of("\n2015-09-05 08:16:30.822"));
-        boolean matches3 = condition.matches(of("2015-09-05 08:16:30.822"));
+        boolean matches1 = condition.matches(of("\n2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ\n"));
+        boolean matches2 = condition.matches(of("\n2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ"));
+        boolean matches3 = condition.matches(of("2015-09-05 08:16:30.822\nąśćźżęłóĄŚĆŻŹĘŁÓ"));
 
         //  then
         assertThat(matches1).isFalse();

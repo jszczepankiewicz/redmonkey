@@ -1,11 +1,13 @@
 package dynks.cache;
 
 import org.junit.Rule;
-import org.junit.rules.ExpectedException;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import static dynks.cache.test.DynksAssertions.assertThat;
+import static dynks.cache.TestValues.UTF8;
 import static dynks.cache.TestValues.UTF8_JSON;
+import static dynks.cache.test.DynksAssertions.assertThat;
+import static org.junit.rules.ExpectedException.none;
 
 /**
  * Created by jszczepankiewicz on 2015-04-11.
@@ -13,7 +15,7 @@ import static dynks.cache.TestValues.UTF8_JSON;
 public class EntryTest {
 
     @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    public ExpectedException thrown = none();
 
     @Test
     public void throwNPEonNulledContent(){
@@ -23,7 +25,7 @@ public class EntryTest {
         thrown.expectMessage("Content to put into cache should not be null");
 
         //  when
-        new Entry(null, "sometag", UTF8_JSON);
+        new Entry(null, "sometag", UTF8_JSON, UTF8);
     }
 
     @Test
@@ -34,7 +36,7 @@ public class EntryTest {
         thrown.expectMessage("Etag to put into cache should not be null");
 
         //  when
-        new Entry("sometag", null, UTF8_JSON);
+        new Entry("sometag", null, UTF8_JSON, UTF8);
     }
 
     @Test
@@ -45,7 +47,7 @@ public class EntryTest {
         final String etag = "980";
 
         //  when
-        Entry entry = new Entry(content, etag, UTF8_JSON);
+        Entry entry = new Entry(content, etag, UTF8_JSON, UTF8);
 
         //  then
         assertThat(entry).hasContent(content).hasEtag(etag);

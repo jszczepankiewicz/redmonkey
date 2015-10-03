@@ -34,8 +34,9 @@ public interface CacheRepository {
      * @param content value itself
      * @param etag    etag value used as hash for version (not null)
      * @param contentType contentType
+     * @param encoding encoding of content
      */
-    void upsert(String key, String content, String etag, String contentType, long ttl, TimeUnit ttlUnit);
+    void upsert(String key, String content, String etag, String contentType, String encoding, long ttl, TimeUnit ttlUnit);
 
     /**
      * Remove value identified by key.
