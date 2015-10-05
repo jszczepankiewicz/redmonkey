@@ -5,13 +5,16 @@ apply plugin: 'jetty'
 
 sourceCompatibility = 1.8
 
-//  jetty plugin configuration
-httpPort = 8080
-stopPort = 9080
-stopKey = "stopKey"
+task setupIntegrationTesting(type: JettyRun) {
+    httpPort = 8080
+    stopPort = 9080
+    stopKey = "stopKey"
+    daemon = true
+}
 
-repositories {
-    mavenCentral()
+task tearDownIntegrationTesting(type: JettyStop) {
+    stopPort = 9080
+    stopKey = "stopKey"
 }
 
 dependencies {

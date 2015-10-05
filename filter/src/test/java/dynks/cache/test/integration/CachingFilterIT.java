@@ -3,14 +3,12 @@ package dynks.cache.test.integration;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+
 import static dynks.cache.TestValues.UTF8_JSON;
 import static dynks.cache.test.DynksAssertions.assertThat;
-
-import java.io.IOException;
-
-import static dynks.http.HttpMethod.DELETE;
-import static dynks.http.HttpMethod.GET;
-import static dynks.http.HttpMethod.POST;
+import static dynks.http.HttpMethod.*;
 
 /**
  * Acceptance tests for caching filter. After trying to build proper integration tests for CachingFiler using PowerMock
@@ -42,11 +40,12 @@ public class CachingFilterIT {
     //  divide into caching passthrough tests & non passthrough
 
     @BeforeClass
-    public static void waitTillJettyFromGradleWillBeReady(){
+    public static void waitTillJettyFromGradleWillBeReady() throws TimeoutException {
         /*
         Gradle fires jetty as daemon asynchronously before running tests here. We need to
         wait (or timeout) on jetty by looking into proper response
          */
+      new Client().waitTillServerReady(5);
     }
 
     @Test
@@ -136,7 +135,7 @@ public class CachingFilterIT {
 
         //  we should have full response with same content and etag returned
         //  as new value
-        assertThat(response1)
+      assertThat(response2)
                 .hasContentType(UTF8_JSON)
                 .hasEtagSet()
                 .hasResponseCode(OK)
@@ -148,5 +147,32 @@ public class CachingFilterIT {
 
 
     }
+
+  @Test
+  public void repeatedGetOnCachedRegionFromDifferentClientsShouldReturnSameValue() throws IOException {
+    //  when
+    ServerResponse response1 = client.requestTo("api/v1/cached/repeatedGetOnCachedRegionFromDifferentClientsShouldReturnSameValue", GET);
+    ServerResponse response2 = client.requestTo("api/v1/cached/repeatedGetOnCachedRegionFromDifferentClientsShouldReturnSameValue", GET);
+
+    //  then
+    assertThat(response1)
+            .hasContentType(UTF8_JSON)
+            .hasEtagSet()
+            .hasResponseCode(OK)
+            .is(nonEmptyPayload)
+            .isFor("api/v1/cached/repeatedGetOnCachedRegionFromDifferentClientsShouldReturnSameValue");
+
+    //  we should have full response with same content and etag returned
+    //  as new value
+    assertThat(response2)
+            .hasContentType(UTF8_JSON)
+            .hasEtagSet()
+            .hasResponseCode(OK)
+            .is(nonEmptyPayload)
+            .isFor("api/v1/cached/repeatedGetOnCachedRegionFromDifferentClientsShouldReturnSameValue");
+
+    assertThat(response1.getEtag()).isEqualTo(response2.getEtag());
+    assertThat(response1.getPayload()).isEqualTo(response2.getPayload());
+  }
 
 }

@@ -25,8 +25,8 @@ public class RedisCacheRepository implements CacheRepository {
     private final String host;
     private final int port;
 
-    public static final CacheQueryResult NO_RESULT_FOUND = new CacheQueryResult(true, null, null, null);
-    private static final CacheQueryResult RESULT_FOUND_BUT_NOT_CHANGED = new CacheQueryResult(false, null, null, null);
+    public static final CacheQueryResult NO_RESULT_FOUND = new CacheQueryResult(true, null, null, null, null);
+    private static final CacheQueryResult RESULT_FOUND_BUT_NOT_CHANGED = new CacheQueryResult(false, null, null, null, null);
 
     public RedisCacheRepository(JedisPoolConfig poolConfig, String host, int port){
 
@@ -54,7 +54,7 @@ public class RedisCacheRepository implements CacheRepository {
             return NO_RESULT_FOUND;
         }
 
-        return new CacheQueryResult(false, out.get(PAYLOAD), out.get(ETAG), out.get(CONTENT_TYPE));
+        return new CacheQueryResult(false, out.get(PAYLOAD), out.get(ETAG), out.get(CONTENT_TYPE), out.get(ENCODING));
     }
 
     @Override

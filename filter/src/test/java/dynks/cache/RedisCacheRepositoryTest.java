@@ -31,220 +31,235 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class RedisCacheRepositoryTest {
 
-    @Rule
-    public ExpectedException thrown = none();
+  @Rule
+  public ExpectedException thrown = none();
 
-    private static final Logger LOG = getLogger(RedisCacheRepositoryTest.class);
+  private static final Logger LOG = getLogger(RedisCacheRepositoryTest.class);
 
-    private static final String JSON_SAVED = "{\"yourName\":\"alice\"}";
-    private static final String KEY = "someKeyValue";
-    private RedisCacheRepository repo;
-    private StringBuilder etagBuilder = new StringBuilder(SIZEOF_ETAG);
+  private static final String JSON_SAVED = "{\"yourName\":\"alice\"}";
+  private static final String KEY = "someKeyValue";
+  private RedisCacheRepository repo;
+  private StringBuilder etagBuilder = new StringBuilder(SIZEOF_ETAG);
 
-    @Before
-    public void cleanUpRedis() {
-        repo = RedisCacheRepositoryConfigBuilder.build(ConfigFactory.load());
+  @Before
+  public void cleanUpRedis() {
+    repo = RedisCacheRepositoryConfigBuilder.build(ConfigFactory.load());
 
-        //  clean up potential hashes
-        try {
-            getJedis().del(KEY);
-        } catch (JedisConnectionException e) {
-            LOG.error("connection exception while preparing integration test. Are you sure there is redis listening on default port on localhost?, details: ", e);
-            throw e;
-        }
+    //  clean up potential hashes
+    try {
+      getJedis().del(KEY);
+    } catch (JedisConnectionException e) {
+      LOG.error("connection exception while preparing integration test. Are you sure there is redis listening on default port on localhost?, details: ", e);
+      throw e;
     }
+  }
 
-    @Test
-    public void throwIAEOnNulledKeyForFetchIfChanged(){
+  @Test
+  public void throwIAEOnNulledKeyForFetchIfChanged() {
 
-        //  then
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Key to upsert should not be null");
+    //  then
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Key to upsert should not be null");
 
-        //  when
-        repo.fetchIfChanged(null, "someEtag");
-    }
+    //  when
+    repo.fetchIfChanged(null, "someEtag");
+  }
 
-    @Test
-    public void throwIAEOnNulledKeyForFetchIfChangedNulledEtag(){
+  @Test
+  public void throwIAEOnNulledKeyForFetchIfChangedNulledEtag() {
 
-        //  then
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Key to upsert should not be null");
+    //  then
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Key to upsert should not be null");
 
-        //  when
-        repo.fetchIfChanged(null, null);
-    }
+    //  when
+    repo.fetchIfChanged(null, null);
+  }
 
-    @Test
-    public void throwIAEOnEmptyKeyForFetchIfChangedNulledEtag(){
+  @Test
+  public void throwIAEOnEmptyKeyForFetchIfChangedNulledEtag() {
 
-        //  then
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Key to upsert should not be empty");
+    //  then
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Key to upsert should not be empty");
 
-        //  when
-        repo.fetchIfChanged(" ", null);
-    }
+    //  when
+    repo.fetchIfChanged(" ", null);
+  }
 
-    @Test
-    public void throwIAEOnEmptyKeyForFetchIfChanged(){
+  @Test
+  public void throwIAEOnEmptyKeyForFetchIfChanged() {
 
-        //  then
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Key to upsert should not be empty");
+    //  then
+    thrown.expect(IllegalArgumentException.class);
+    thrown.expectMessage("Key to upsert should not be empty");
 
-        //  when
-        repo.fetchIfChanged(" ", "someEtag");
-    }
+    //  when
+    repo.fetchIfChanged(" ", "someEtag");
+  }
 
-    @Test
-    public void upsertValueIfNotExist() {
+  @Test
+  public void upsertValueIfNotExist() {
 
-        //  given
-        String etag = ETag.of(JSON_SAVED, etagBuilder);
+    //  given
+    String etag = ETag.of(JSON_SAVED, etagBuilder);
 
-        //  when
-        repo.upsert(KEY, JSON_SAVED, etag, UTF8_JSON, UTF8, 999, HOURS);
+    //  when
+    repo.upsert(KEY, JSON_SAVED, etag, UTF8_JSON, UTF8, 999, HOURS);
 
-        //  then
-        assertValueExist(KEY, etag, JSON_SAVED, UTF8_JSON, UTF8);
+    //  then
+    assertValueExist(KEY, etag, JSON_SAVED, UTF8_JSON, UTF8);
 
-    }
+  }
 
-    @Test
-    public void upsertValueEvenIfKeyExistsWithDifferentEtag() {
+  @Test
+  public void utf8UpsertShouldReturnCorrectValuesFromCache() {
 
-        //  given
-        havingEntryCached(KEY, JSON_SAVED, "someetagxyz", UTF8_JSON, UTF8);
-        final String newContent = "[]";
-        final String newEtag = ETag.of(newContent, etagBuilder);
+    //  given
+    String payload = "ąśćźżęłóĄŚĆŻŹĘŁÓ";
 
-        //  when
-        repo.upsert(KEY, newContent, newEtag, UTF8_JSON, UTF8, 999, HOURS);
+    //  when
+    repo.upsert(KEY, payload, "etag1", UTF8_JSON, UTF8, 999, HOURS);
+    CacheQueryResult result = repo.fetchIfChanged(KEY, null);
 
-        //  then
-        assertValueExist(KEY, newEtag, newContent, UTF8_JSON, UTF8);
-    }
+    //  then
+    assertThat(result.getPayload()).isEqualTo(payload);
 
+  }
 
-    /*
-     * there is no value for given key, CacheResult will return: upsertNeeded: true, payload: null, storedEtag: null
-     */
-    @Test
-    public void detectMissingEntryOnFetch() {
+  @Test
+  public void upsertValueEvenIfKeyExistsWithDifferentEtag() {
 
-        //  given
-        final String key = "sk1";
-        final String etag = "se1";
+    //  given
+    havingEntryCached(KEY, JSON_SAVED, "someetagxyz", UTF8_JSON, UTF8);
+    final String newContent = "[]";
+    final String newEtag = ETag.of(newContent, etagBuilder);
 
-        //  when
-        CacheQueryResult result = repo.fetchIfChanged(key, etag);
+    //  when
+    repo.upsert(KEY, newContent, newEtag, UTF8_JSON, UTF8, 999, HOURS);
 
-        //  then
-        assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNeeded();
-    }
-
-    /**
-     * client does not provide etag (null), but value in cache also does not exist. Should return:
-     * upsertNeeded: true, payload containsCacheable, storedEtag
-     */
-
-    @Test
-    public void returnContentClientFirstTimeContentNotYetCached(){
-
-        //  when
-        CacheQueryResult result = repo.fetchIfChanged(KEY, null);
-
-        //  then
-        assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNeeded();
-
-    }
-
-    /*
-     * there is value for given key but etag == null, CacheResult will return: upsertNeeded: false, payload containsCacheable the value,
-     * storedEtag: corresponding etag value associated with given key
-     */
-    @Test
-    public void returnEntryFromCacheWhenEtagUnknown() {
-
-        //  given
-        String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
-
-        //  when
-        CacheQueryResult result = repo.fetchIfChanged(KEY, null);
-
-        //  then
-        assertThat(result).hasPayload(JSON_SAVED).hasStoredEtag(etagExisting).isUpsertNotNeeded();
-    }
-
-    /*
-     *  there is value for given key and etag == storedEtag for given value, CacheResult will return: upsertNeeded: false,
-     *  payload contain null, storedEtag: null
-     */
-    @Test
-    public void fetchNotNeededAsCachedVersionNotChanged() {
-
-        //  given
-        String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
-
-        //  when
-        CacheQueryResult result = repo.fetchIfChanged(KEY, etagExisting);
-
-        //  then
-        assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNotNeeded();
-    }
-
-    /*
-     * there is value for given key and etag != storedEtag for given value, CacheResult will return: upsertNeeded: false,
-     * payload contain latest version, storedEtag: etag corresponding with given value
-     */
-    @Test
-    public void fetchReturnedNewerEntry() {
-
-        //  given
-        String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
-        havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
-
-        //  when
-        CacheQueryResult result = repo.fetchIfChanged(KEY, "someolderetag");
-
-        //  then
-        assertThat(result).hasPayload(JSON_SAVED).hasStoredEtag(etagExisting).isUpsertNotNeeded();
-    }
+    //  then
+    assertValueExist(KEY, newEtag, newContent, UTF8_JSON, UTF8);
+  }
 
 
-    @Ignore
-    @Test
-    public void removeKeyIfExist() {
+  /*
+   * there is no value for given key, CacheResult will return: upsertNeeded: true, payload: null, storedEtag: null
+   */
+  @Test
+  public void detectMissingEntryOnFetch() {
 
-    }
+    //  given
+    final String key = "sk1";
+    final String etag = "se1";
 
-    //  test utils
+    //  when
+    CacheQueryResult result = repo.fetchIfChanged(key, etag);
 
-    private Jedis getJedis() {
-        return new Jedis("localhost");
-    }
+    //  then
+    assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNeeded();
+  }
 
-    private void havingEntryCached(String key, String content, String etag, String contentType, String encoding) {
-        Jedis jedis = getJedis();
-        jedis.hmset(key, new Entry(content, etag, contentType, encoding));
-    }
+  /**
+   * client does not provide etag (null), but value in cache also does not exist. Should return:
+   * upsertNeeded: true, payload containsCacheable, storedEtag
+   */
 
-    private void assertValueExist(String key, String expectedEtag, String expectedContent, String expectedContentType, String expectedEncoding) {
+  @Test
+  public void returnContentClientFirstTimeContentNotYetCached() {
 
-        Jedis jedis = getJedis();
-        Map<String, String> out = jedis.hgetAll(key);
+    //  when
+    CacheQueryResult result = repo.fetchIfChanged(KEY, null);
 
-        assertThat(out).isNotEmpty()
-                .hasSize(4)
-                .contains(entry(PAYLOAD, expectedContent))
-                .contains(entry(ETAG, expectedEtag))
-                .contains(entry(CONTENT_TYPE, expectedContentType))
-                .contains(entry(ENCODING, expectedEncoding))
-        ;
-    }
+    //  then
+    assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNeeded();
+
+  }
+
+  /*
+   * there is value for given key but etag == null, CacheResult will return: upsertNeeded: false, payload containsCacheable the value,
+   * storedEtag: corresponding etag value associated with given key
+   */
+  @Test
+  public void returnEntryFromCacheWhenEtagUnknown() {
+
+    //  given
+    String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
+    havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
+
+    //  when
+    CacheQueryResult result = repo.fetchIfChanged(KEY, null);
+
+    //  then
+    assertThat(result).hasPayload(JSON_SAVED).hasStoredEtag(etagExisting).isUpsertNotNeeded();
+  }
+
+  /*
+   *  there is value for given key and etag == storedEtag for given value, CacheResult will return: upsertNeeded: false,
+   *  payload contain null, storedEtag: null
+   */
+  @Test
+  public void fetchNotNeededAsCachedVersionNotChanged() {
+
+    //  given
+    String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
+    havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
+
+    //  when
+    CacheQueryResult result = repo.fetchIfChanged(KEY, etagExisting);
+
+    //  then
+    assertThat(result).hasPayload(null).hasStoredEtag(null).isUpsertNotNeeded();
+  }
+
+  /*
+   * there is value for given key and etag != storedEtag for given value, CacheResult will return: upsertNeeded: false,
+   * payload contain latest version, storedEtag: etag corresponding with given value
+   */
+  @Test
+  public void fetchReturnedNewerEntry() {
+
+    //  given
+    String etagExisting = ETag.of(JSON_SAVED, etagBuilder);
+    havingEntryCached(KEY, JSON_SAVED, etagExisting, UTF8_JSON, UTF8);
+
+    //  when
+    CacheQueryResult result = repo.fetchIfChanged(KEY, "someolderetag");
+
+    //  then
+    assertThat(result).hasPayload(JSON_SAVED).hasStoredEtag(etagExisting).isUpsertNotNeeded();
+  }
+
+
+  @Ignore
+  @Test
+  public void removeKeyIfExist() {
+
+  }
+
+  //  test utils
+
+  private Jedis getJedis() {
+    return new Jedis("localhost");
+  }
+
+  private void havingEntryCached(String key, String content, String etag, String contentType, String encoding) {
+    Jedis jedis = getJedis();
+    jedis.hmset(key, new Entry(content, etag, contentType, encoding));
+  }
+
+  private void assertValueExist(String key, String expectedEtag, String expectedContent, String expectedContentType, String expectedEncoding) {
+
+    Jedis jedis = getJedis();
+    Map<String, String> out = jedis.hgetAll(key);
+
+    assertThat(out).isNotEmpty()
+            .hasSize(4)
+            .contains(entry(PAYLOAD, expectedContent))
+            .contains(entry(ETAG, expectedEtag))
+            .contains(entry(CONTENT_TYPE, expectedContentType))
+            .contains(entry(ENCODING, expectedEncoding))
+    ;
+  }
 
 }

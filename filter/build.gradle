@@ -8,6 +8,10 @@ repositories {
     mavenCentral()
 }
 
+
+test.dependsOn(":integration-tests:setupIntegrationTesting")
+test.finalizedBy(":integration-tests:tearDownIntegrationTesting")
+
 jacocoTestReport {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
@@ -33,5 +37,8 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.0.0'
     testCompile 'org.powermock:powermock-module-junit4:1.6.2'
     testCompile 'org.powermock:powermock-api-mockito:1.6.2'
+
+    //  we do not want to distribute that with release version of library
+    testRuntime 'org.slf4j:slf4j-simple:1.7.12'
 
 }

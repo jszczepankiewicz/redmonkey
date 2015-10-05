@@ -38,8 +38,8 @@ public class Utf8Servlet extends HttpServlet {
     LOG.info("Generating response for method: {}, URI: {}, stamp: {}", req.getMethod(), uri, stamp);
 
 
-    resp.setContentType("application/json; charset=UTF-8");
-    resp.setCharacterEncoding("UTF-8");
+    resp.setContentType("application/json; charset=utf-8");
+    resp.setCharacterEncoding("utf-8");
 
     PrintWriter out = resp.getWriter();
     out.write(uri);

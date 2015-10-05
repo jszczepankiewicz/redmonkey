@@ -28,109 +28,113 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class CachingFilter implements Filter {
 
-    private static final Logger LOG = getLogger(CachingFilter.class);
+  private static final Logger LOG = getLogger(CachingFilter.class);
 
-    private CacheRepository cache;
-    private ResponseCacheByURIPolicy policy;
+  private CacheRepository cache;
+  private ResponseCacheByURIPolicy policy;
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        Config config = ConfigFactory.load("dynks");
-        cache = RedisCacheRepositoryConfigBuilder.build(config);
-        policy = ResponseCacheByURIBuilder.build(config);
-    }
+  @Override
+  public void init(FilterConfig filterConfig) throws ServletException {
+    Config config = ConfigFactory.load("dynks");
+    cache = RedisCacheRepositoryConfigBuilder.build(config);
+    policy = ResponseCacheByURIBuilder.build(config);
+  }
 
-    @Override
-    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+  @Override
+  public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
 
-        final HttpServletRequest request = (HttpServletRequest) req;
-        final HttpServletResponse response = (HttpServletResponse) res;
+    final HttpServletRequest request = (HttpServletRequest) req;
+    final HttpServletResponse response = (HttpServletResponse) res;
 
 
-        if (GET.equalsIgnoreCase(request.getMethod())) {
+    if (GET.equalsIgnoreCase(request.getMethod())) {
 
-            final Probe probe = getProbe(LOG);
-            final long nanoStart = nanoTime();
+      final Probe probe = getProbe(LOG);
+      final long nanoStart = nanoTime();
 
-            try {
+      try {
 
-                probe.log(request.getRequestURI());
+        probe.log(request.getRequestURI());
 
-                CacheRegion cacheRegion = policy.getfor(request);
+        CacheRegion cacheRegion = policy.getfor(request);
 
-                if (cacheRegion.getCacheability() == PASSTHROUGH) {
-                    doFiltering(chain, probe, req, res);
-                    probe.log("passthrough");
-                    return;
-                }
-
-                String key = cacheRegion.getKeyStrategy().keyFor(request);
-                String requestEtag = getFrom(request);
-                probe.start('f');
-                CacheQueryResult result = cache.fetchIfChanged(key, requestEtag);
-                probe.stop();
-
-                if (result.isUpsertNeeded()) {
-                    probe.log("upsert");
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    CachedResponseWrapper wrappedResponse = new CachedResponseWrapper(response, baos);
-                    //  invoking "production" of content from underlying resources
-                    doFiltering(chain, probe, req, wrappedResponse);
-                    //  caching response for future use
-                    String encoding = wrappedResponse.getCharacterEncoding();
-                    String generated = baos.toString(encoding);
-                    probe.log(baos.size());
-                    String etag = of(generated, new StringBuilder(SIZEOF_ETAG));
-                    probe.log(etag);
-                    probe.log("upsert");
-                    probe.start('u');
-                    cache.upsert(key, generated, etag, wrappedResponse.getContentType(), encoding, cacheRegion.getTtl(), cacheRegion.getTtlUnit());
-                    probe.stop();
-                    writeIn(response, etag);
-                    //  now we need to copy from generated stream into original stream
-                    res.getOutputStream().write(baos.toByteArray());
-                    res.getOutputStream().flush();
-
-                    return;
-                } else {
-                    if (result.getStoredEtag() == null) {
-                        //  client already has latest version
-                        response.setStatus(SC_NOT_MODIFIED);
-                        probe.log("not-changed");
-                        return;
-                    } else {
-                        //  client has old version, we need to sent him latest one
-                        response.setStatus(SC_OK);
-                        writeIn(response, result.getStoredEtag());
-                        res.setContentType(result.getContentType());
-                        res.getOutputStream().write(result.getPayload().getBytes());
-                        res.getOutputStream().flush();
-                        probe.log("changed");
-                    }
-                }
-            } finally {
-                probe.stop('a', nanoStart);
-                probe.flushLog();
-            }
-        } else {
-            //  passthrough anything else than GET without checking & saving in cache, not even logging perf
-            chain.doFilter(req, res);
-            return;
+        if (cacheRegion.getCacheability() == PASSTHROUGH) {
+          doFiltering(chain, probe, req, res);
+          probe.log("passthrough");
+          return;
         }
 
-    }
-
-    private void doFiltering(FilterChain chain, Probe probe, ServletRequest req, ServletResponse res) throws IOException, ServletException {
-        probe.start('g');
-        chain.doFilter(req, res);
+        String key = cacheRegion.getKeyStrategy().keyFor(request);
+        String requestEtag = getFrom(request);
+        probe.start('f');
+        CacheQueryResult result = cache.fetchIfChanged(key, requestEtag);
         probe.stop();
-    }
 
-    @Override
-    public void destroy() {
+        if (result.isUpsertNeeded()) {
+          probe.log("upsert");
+          ByteArrayOutputStream baos = new ByteArrayOutputStream();
+          CachedResponseWrapper wrappedResponse = new CachedResponseWrapper(response, baos);
+          //  invoking "production" of content from underlying resources
+          doFiltering(chain, probe, req, wrappedResponse);
+          //  caching response for future use
+          String encoding = wrappedResponse.getCharacterEncoding();
+          String generated = baos.toString(encoding);
+          probe.log(baos.size());
+          String etag = of(generated, new StringBuilder(SIZEOF_ETAG));
+          probe.log(etag);
+          probe.log("upsert");
+          probe.start('u');
+          cache.upsert(key, generated, etag, wrappedResponse.getContentType(), encoding, cacheRegion.getTtl(), cacheRegion.getTtlUnit());
+          probe.stop();
+          writeIn(response, etag);
+          //  now we need to copy from generated stream into original stream
+          res.getOutputStream().write(baos.toByteArray());
+          res.getOutputStream().flush();
 
-        if (cache != null) {
-            cache.dispose();
+          return;
+        } else {
+          if (result.getStoredEtag() == null) {
+            //  client already has latest version
+            response.setStatus(SC_NOT_MODIFIED);
+            probe.log("not-changed");
+            return;
+          } else {
+            //  client has old version or access this for first time, we need to sent him latest one
+            res.setCharacterEncoding(result.getEncoding());
+            res.setContentType(result.getContentType());
+
+            //  writing to response should be done AFTER encoding was set
+            writeIn(response, result.getStoredEtag());
+            response.setStatus(SC_OK);
+            res.getOutputStream().write(result.getPayload().getBytes(result.getEncoding()));
+
+            res.getOutputStream().flush();
+            probe.log("changed");
+          }
         }
+      } finally {
+        probe.stop('a', nanoStart);
+        probe.flushLog();
+      }
+    } else {
+      //  passthrough anything else than GET without checking & saving in cache, not even logging perf
+      chain.doFilter(req, res);
+      return;
     }
+
+  }
+
+  private void doFiltering(FilterChain chain, Probe probe, ServletRequest req, ServletResponse res) throws IOException, ServletException {
+    probe.start('g');
+    chain.doFilter(req, res);
+    probe.stop();
+  }
+
+  @Override
+  public void destroy() {
+
+    if (cache != null) {
+      cache.dispose();
+    }
+  }
 }
