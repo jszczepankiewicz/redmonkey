@@ -109,7 +109,8 @@ public class CachingFilter implements Filter {
             res.getOutputStream().write(result.getPayload().getBytes(result.getEncoding()));
 
             res.getOutputStream().flush();
-            probe.log("changed");
+            probe.log("new-or-changed");
+            return;
           }
         }
       } finally {

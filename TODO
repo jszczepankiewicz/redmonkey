@@ -9,7 +9,6 @@ TODO:
 - add invalidation
 - add more tests (for encoding & type)
 - test whether different contentType are respected
-- automate IT testing
 - check on travis the results
 - add findbugs / pmd checks
 - handle sitepage
@@ -29,3 +28,4 @@ TODO:
 [DONE] refactor packages
 [DONE] finish perfomance debug tracking
 [DONE] remove UTF8 hardcoded in filter + tests against that (reading characterEncoding + contentType)
+[DONE] automate IT testing
